@@ -62,10 +62,18 @@ string_t gm_isz_name_activator;
 void InitGlobalStrings()
 {
 #ifdef HL2_DLL
-	INITIALIZE_GLOBAL_STRING(gm_isz_class_Shotgun, "weapon_shotgun");
-	INITIALIZE_GLOBAL_STRING(gm_isz_class_SMG1, "weapon_smg1");
-	INITIALIZE_GLOBAL_STRING(gm_isz_class_AR2, "weapon_ar2");
-	INITIALIZE_GLOBAL_STRING(gm_isz_class_Pistol, "weapon_pistol");
+	//INITIALIZE_GLOBAL_STRING(gm_isz_class_Shotgun, "weapon_shotgun");
+	INITIALIZE_GLOBAL_STRING(gm_isz_class_Shotgun, "weapon_spas12");
+	#define gm_isz_class_Spas12 gm_isz_class_Shotgun
+	//INITIALIZE_GLOBAL_STRING(gm_isz_class_SMG1, "weapon_smg1");
+	INITIALIZE_GLOBAL_STRING(gm_isz_class_SMG1, "weapon_mp7");
+	#define gm_isz_class_MP7 gm_isz_class_SMG1
+	//INITIALIZE_GLOBAL_STRING(gm_isz_class_AR2, "weapon_ar2");
+	INITIALIZE_GLOBAL_STRING(gm_isz_class_AR2, "weapon_energyar");
+	#define gm_isz_class_EnergyAr gm_isz_class_AR2
+	//INITIALIZE_GLOBAL_STRING(gm_isz_class_Pistol, "weapon_pistol");
+	INITIALIZE_GLOBAL_STRING(gm_isz_class_Pistol, "weapon_staplegun");
+	#define gm_isz_class_StapleGun gm_isz_class_Pistol
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Stunstick, "weapon_stunstick");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Crowbar, "weapon_crowbar");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_RPG, "weapon_rpg");

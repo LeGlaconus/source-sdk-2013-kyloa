@@ -165,7 +165,9 @@ void CNPC_Barney::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 {
 	BaseClass::Weapon_Equip( pWeapon );
 
-	if( hl2_episodic.GetBool() && FClassnameIs( pWeapon, "weapon_ar2" ) )
+	//Kyloa : energy ar
+	//if( hl2_episodic.GetBool() && FClassnameIs( pWeapon, "weapon_ar2" ) )
+	if( hl2_episodic.GetBool() && FClassnameIs( pWeapon, "weapon_energyar" ) )
 	{
 		// Allow Barney to defend himself at point-blank range in c17_05.
 		pWeapon->m_fMinRange1 = 0.0f;

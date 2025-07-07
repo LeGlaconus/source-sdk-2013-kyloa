@@ -4,6 +4,10 @@
 //	Project Script
 //-----------------------------------------------------------------------------
 
+//-------------------------
+//- Also used for Kyloa ! -
+//-------------------------
+
 $Macro SRCDIR		"..\.."
 $Macro GAMENAME 	"episodic" [!$SOURCESDK]
 $Macro GAMENAME 	"mod_episodic" [$SOURCESDK]
@@ -14,12 +18,12 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;.\hl2;.\episodic"
+		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;.\hl2;.\episodic;.\kyloa"
 		$PreprocessorDefinitions		"$BASE;HL2_DLL;HL2_EPISODIC;USES_SAVERESTORE"
 	}
 }
 
-$Project "Server (Episodic)"
+$Project "Server (Kyloa)"
 {
 	$Folder	"Source Files"
 	{
@@ -47,6 +51,61 @@ $Project "Server (Episodic)"
 		$File	"vehicle_choreo_generic.cpp"
 		$File	"$SRCDIR\game\shared\vehicle_choreo_generic_shared.h"
 		$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
+
+		//------------
+		//Kyloa
+		//------------
+
+		$Folder "Kyloa"
+		{
+
+			$Folder "Weapons"
+			{
+				//Staple gun
+				$File	"kyloa\weapon_staplegun.h"
+				$File	"kyloa\weapon_staplegun.cpp"
+
+				//Xx_pipe_xX
+				$File	"kyloa\weapon_pipe.h"
+				$File	"kyloa\weapon_pipe.cpp"
+
+				$File	"kyloa\weapon_mp7.h"
+				$File	"kyloa\weapon_mp7.cpp"
+
+				$File	"kyloa\weapon_spas12.h"
+				$File	"kyloa\weapon_spas12.cpp"
+
+				$File	"kyloa\weapon_energyar.h"
+				$File	"kyloa\weapon_energyar.cpp"
+			}
+
+			$Folder "NPCs"
+			{
+				//Silly ahh zombie spinoff
+				//$File	"kyloa\npc_crawler.h"
+				$File	"kyloa\npc_crawler.cpp"
+			}
+
+			$Folder "Items"
+			{
+				//Energy nugget stuff
+				$File	"kyloa\item_energy_nugget.h"
+				$File	"kyloa\item_energy_nugget.cpp"
+			}
+
+			//For weapon values
+			$File	"kyloa\viewpunch_debug.cpp"
+			
+
+			//===
+			//Shared stuff
+			//===
+
+			//Base Kyloa Combat weapon
+			//$File	"$SRCDIR\game\shared\kyloa\basekyloacombatweapon_shared.h"
+			//$File	"$SRCDIR\game\shared\kyloa\basekyloacombatweapon_shared.cpp"
+		}
+
 
 		$Folder	"HL2 DLL"
 		{

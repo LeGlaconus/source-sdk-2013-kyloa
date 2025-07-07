@@ -187,6 +187,7 @@ void CBaseCombatWeapon::Spawn( void )
 	if ( GetWorldModel() )
 	{
 #ifdef MAPBASE
+		// If there's no dropped model, use world model instead
 		SetModel( (GetDroppedModel() && GetDroppedModel()[0]) ? GetDroppedModel() : GetWorldModel() );
 #else
 		SetModel( GetWorldModel() );
@@ -194,10 +195,6 @@ void CBaseCombatWeapon::Spawn( void )
 	}
 
 #if !defined( CLIENT_DLL )
-	if( IsX360() )
-	{
-		AddEffects( EF_ITEM_BLINK );
-	}
 
 	FallInit();
 	SetCollisionGroup( COLLISION_GROUP_WEAPON );
@@ -708,6 +705,10 @@ bool CBaseCombatWeapon::CanBeSelected( void )
 	if ( !VisibleInWeaponSelection() )
 		return false;
 
+	//Kyloa : energy based weapons can be selected even if they don't have any ammo left
+	if (HasSpawnFlags(SF_ENERGY_WEAPON))
+		return true;
+
 	return HasAmmo();
 }
 
@@ -1137,21 +1138,36 @@ WeaponClass_t CBaseCombatWeapon::WeaponClassFromString(const char *str)
 }
 
 #ifdef HL2_DLL
+extern acttable_t *GetPistolActtable();
+extern int GetPistolActtableCount();
+
 extern acttable_t *GetSMG1Acttable();
 extern int GetSMG1ActtableCount();
-
-extern acttable_t *GetAR2Acttable();
-extern int GetAR2ActtableCount();
 
 extern acttable_t *GetShotgunActtable();
 extern int GetShotgunActtableCount();
 
-extern acttable_t *GetPistolActtable();
-extern int GetPistolActtableCount();
-
 extern acttable_t *Get357Acttable();
 extern int Get357ActtableCount();
-#endif
+
+extern acttable_t *GetAR2Acttable();
+extern int GetAR2ActtableCount();
+
+
+//Kyloa
+extern acttable_t* GetStapleGunActtable();
+extern int GetStapleGunActtableCount();
+
+extern acttable_t* GetMP7Acttable();
+extern int GetMP7ActtableCount();
+
+extern acttable_t* GetSpas12Acttable();
+extern int GetSpas12ActtableCount();
+
+extern acttable_t* GetEnergyArActtable();
+extern int GetEnergyArActtableCount();
+
+#endif //HL2_DLL
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1162,7 +1178,8 @@ bool CBaseCombatWeapon::SupportsBackupActivity(Activity activity)
 
 #ifdef HL2_DLL
 	// Melee users should not use SMG animations for missing activities.
-	if (IsMeleeWeapon() && GetBackupActivityList() == GetSMG1Acttable())
+	//Kyloa confirm : is this gonna work
+	if (IsMeleeWeapon() && GetBackupActivityList() == GetMP7Acttable())
 		return false;
 #endif
 
@@ -1186,6 +1203,7 @@ acttable_t *CBaseCombatWeapon::GetDefaultBackupActivityList( acttable_t *pTable,
 {
 #ifdef HL2_DLL
 	// Ensure this isn't already a default backup activity list
+	//Kyloa Confirm : is this going to create any issues ?
 	if (pTable == GetSMG1Acttable() || pTable == GetPistolActtable())
 		return NULL;
 
@@ -1210,6 +1228,7 @@ acttable_t *CBaseCombatWeapon::GetDefaultBackupActivityList( acttable_t *pTable,
 #endif
 		case ACT_IDLE_ANGRY_PISTOL:
 			{
+				//Kyloa confirm : is this gonna work ?
 				actCount = GetPistolActtableCount();
 				return GetPistolActtable();
 			}
@@ -1226,6 +1245,7 @@ acttable_t *CBaseCombatWeapon::GetDefaultBackupActivityList( acttable_t *pTable,
 		case ACT_IDLE_ANGRY_SHOTGUN:
 		case ACT_IDLE_ANGRY_RPG:
 			{
+				//Kyloa confirm : is this gonna work ?
 				actCount = GetSMG1ActtableCount();
 				return GetSMG1Acttable();
 			}
@@ -2490,7 +2510,13 @@ bool CBaseCombatWeapon::ReloadsSingly( void ) const
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Reload( void )
 {
-	return DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
+	bool bReload = DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
+	if (bReload)
+	{
+		WeaponSound(RELOAD);
+		SendWeaponAnim(ACT_VM_RELOAD);
+	}
+	return bReload;
 }
 
 #ifdef MAPBASE

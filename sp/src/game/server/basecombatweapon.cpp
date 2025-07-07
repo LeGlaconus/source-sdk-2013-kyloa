@@ -472,11 +472,7 @@ void CBaseCombatWeapon::DestroyItem( void )
 
 void CBaseCombatWeapon::Kill( void )
 {
-	SetTouch( NULL );
-	// FIXME: why doesn't this just remove itself now?
-	// FIXME: how is this different than Delete(), and why do they have the same code in them?
-	SetThink(&CBaseCombatWeapon::SUB_Remove);
-	SetNextThink( gpGlobals->curtime + 0.1f );
+	Delete();
 }
 
 //====================================================================================

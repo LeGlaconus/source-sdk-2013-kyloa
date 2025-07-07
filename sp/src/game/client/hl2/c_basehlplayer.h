@@ -68,6 +68,9 @@ public:
 
 public:
 
+	//Kyloa : energy
+	int GetEnergy() { return m_HL2Local.m_iPlayerEnergy; }
+
 	C_HL2PlayerLocalData		m_HL2Local;
 	EHANDLE				m_hClosestNPC;
 	float				m_flSpeedModTime;

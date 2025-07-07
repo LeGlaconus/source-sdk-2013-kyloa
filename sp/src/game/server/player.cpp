@@ -4781,7 +4781,10 @@ void CBasePlayer::PostThink()
 		{
 			// set correct collision bounds (may have changed in player movement code)
 			VPROF_SCOPE_BEGIN( "CBasePlayer::PostThink-Bounds" );
-			if ( GetFlags() & FL_DUCKING )
+
+			//Kyloa : water mechanic
+
+			if ( GetFlags() & FL_DUCKING || (GetWaterLevel() == WL_Eyes))
 			{
 				SetCollisionBounds( VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX );
 			}
@@ -4798,10 +4801,7 @@ void CBasePlayer::PostThink()
 				// if they've moved too far from the gun, or deployed another weapon, unuse the gun
 				if ( m_hUseEntity->OnControls( this ) && 
 					( !GetActiveWeapon() || GetActiveWeapon()->IsEffectActive( EF_NODRAW ) ||
-					( GetActiveWeapon()->GetActivity() == ACT_VM_HOLSTER ) 
-	#ifdef PORTAL // Portalgun view model stays up when holding an object -Jeep
-					|| FClassnameIs( GetActiveWeapon(), "weapon_portalgun" ) 
-	#endif //#ifdef PORTAL			
+					( GetActiveWeapon()->GetActivity() == ACT_VM_HOLSTER ) 		
 					) )
 				{  
 					m_hUseEntity->Use( this, this, USE_SET, 2 );	// try fire the gun
@@ -4930,7 +4930,9 @@ void CBasePlayer::PostThinkVPhysics( void )
 	{
 		collisionState = VPHYS_NOCLIP;
 	}
-	else if ( GetFlags() & FL_DUCKING )
+	//Kyloa Confirm : must this be placed here ?
+	//Kyloa : water mechanic
+	else if ( GetFlags() & FL_DUCKING || (GetWaterLevel() == WL_Eyes) )
 	{
 		collisionState = VPHYS_CROUCH;
 	}
@@ -5544,6 +5546,13 @@ int CBasePlayer::Restore( IRestore &restore )
 		FixPlayerCrouchStuck( this );
 		UTIL_SetSize(this, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
 		m_Local.m_bDucked = true;
+	}
+	//Kyloa : water mechanic
+	else if (GetWaterLevel() == WL_Eyes)
+	{
+		FixPlayerCrouchStuck(this);
+		UTIL_SetSize(this, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+		//not setting m_bDucked for this one
 	}
 	else
 	{
@@ -6538,20 +6547,35 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveAmmo( 16,	"XBowBolt" );
 #ifdef HL2_EPISODIC
 		GiveAmmo( 5,	"Hopwire" );
+
+		//Kyloa
+		GiveAmmo( 8, "Staple" );
+
 #endif		
+#if ENABLE_HL2_WEAPONS
 		GiveNamedItem( "weapon_smg1" );
-		GiveNamedItem( "weapon_frag" );
-		GiveNamedItem( "weapon_crowbar" );
 		GiveNamedItem( "weapon_pistol" );
 		GiveNamedItem( "weapon_ar2" );
 		GiveNamedItem( "weapon_shotgun" );
-		GiveNamedItem( "weapon_physcannon" );
-		GiveNamedItem( "weapon_bugbait" );
-		GiveNamedItem( "weapon_rpg" );
-		GiveNamedItem( "weapon_357" );
-		GiveNamedItem( "weapon_crossbow" );
+#endif //ENABLE_HL2_WEAPONS
+		//GiveNamedItem( "weapon_frag" );
+		//GiveNamedItem( "weapon_crowbar" );
+		//GiveNamedItem( "weapon_physcannon" );
+		//GiveNamedItem( "weapon_bugbait" );
+		//GiveNamedItem( "weapon_rpg" );
+		//GiveNamedItem( "weapon_357" );
+		//GiveNamedItem( "weapon_crossbow" );
 #ifdef HL2_EPISODIC
 		// GiveNamedItem( "weapon_magnade" );
+
+		//Kyloa
+		GiveNamedItem( "weapon_pipe" );
+		GiveNamedItem( "weapon_staplegun" );
+		GiveNamedItem( "weapon_mp7" );
+		GiveNamedItem( "weapon_spas12" );
+		GiveNamedItem( "weapon_energyar" );
+		engine->ClientCommand(this->edict(), "energy_refillenergyar\n");
+
 #endif
 		if ( GetHealth() < 100 )
 		{

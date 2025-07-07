@@ -91,6 +91,7 @@
 		#define IsWindows() true
 		#define IsPC() true
 		#define IsConsole() false
+		//#define IsX360() false
 		#define IsX360() false
 		#define IsPS3() false
 		#define IS_WINDOWS_PC

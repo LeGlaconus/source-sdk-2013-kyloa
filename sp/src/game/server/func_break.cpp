@@ -45,6 +45,8 @@ extern Vector		g_vecAttackDir;
 // be spawned, and still remain fairly flexible
 
 #ifndef HL1_DLL
+
+#if 0
 	const char *CBreakable::pSpawnObjects[] =
 	{
 		NULL,						// 0
@@ -75,6 +77,42 @@ extern Vector		g_vecAttackDir;
 		"unused (weapon_molotov) 25",// 25
 		"item_dynamic_resupply",	// 26
 	};
+#endif //if 0
+
+//Kyloa table
+	const char* CBreakable::pSpawnObjects[] =
+	{
+		NULL,						// 0
+		"item_battery",				// 1
+		"item_healthkit",			// 2
+		"item_ammo_staplegun",		// 3
+		"item_ammo_staplegun_medium"// 4
+		"item_ammo_staplegun_large",// 5
+		"item_ammo_mp7",			// 6
+		"item_ammo_mp7_large",		// 7
+		//"unused (item_ammo_ar2)",			// old 7 obsolete
+		"unused (item_ammo_ar2_large) 8",		// 8 obsolete
+		"item_ammo_spas12",			// 9 
+		"unused (item_flare_round) 10",			// 10 obsolete
+		"unused (item_box_flare_rounds) 11",	// 11 obsolete
+		"unused (item_rpg_round) 12",			// 12 obsolete
+		"item_mp7_grenade",// 13 
+		"unused (item_box_sniper_rounds) 14",	// 14
+		"unused (???"") 15",		// 15 - split into two strings to avoid trigraph warning 
+		"unused (weapon_stunstick) 16",			// 16
+		"unused (weapon_ar1) 17",	// 17
+		"weapon_energyar",				// 18
+		"unused (???"") 19",		// 19 - split into two strings to avoid trigraph warning 
+		"unused (weapon_rpg) 20",				// 20
+		"weapon_mp7",				// 21
+		"unused (weapon_smg2) 22",	// 22
+		"unused (weapon_slam) 23",	// 23
+		"weapon_spas12",			// 24
+		"unused (weapon_molotov) 25",// 25
+		"item_dynamic_resupply",	// 26
+	};
+
+
 #else
 	// Half-Life 1 spawn objects!
 	const char *CBreakable::pSpawnObjects[] =

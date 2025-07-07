@@ -23,6 +23,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if ENABLE_HL2_WEAPONS
+
 //-----------------------------------------------------------------------------
 // CWeapon357
 //-----------------------------------------------------------------------------
@@ -95,6 +97,19 @@ END_SEND_TABLE()
 
 BEGIN_DATADESC( CWeapon357 )
 END_DATADESC()
+
+#endif //ENABLE_HL2_WEAPONS
+
+#ifndef ENABLE_HL2_WEAPONS
+
+class CWeapon357
+{
+	DECLARE_CLASS_NOBASE(CWeapon357);
+public:
+	DECLARE_ACTTABLE();
+};
+
+#endif //ENABLE_HL2_WEAPONS
 
 #ifdef MAPBASE
 acttable_t	CWeapon357::m_acttable[] =
@@ -237,6 +252,8 @@ int Get357ActtableCount()
 	return ARRAYSIZE(CWeapon357::m_acttable);
 }
 #endif
+
+#if ENABLE_HL2_WEAPONS
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -398,3 +415,5 @@ void CWeapon357::PrimaryAttack( void )
 		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
 	}
 }
+
+#endif //ENABLE_HL2_WEAPONS

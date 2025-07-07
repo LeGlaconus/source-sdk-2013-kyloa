@@ -14,9 +14,9 @@ $Macro GENERATED_PROTO_DIR	"$SRCDIR\game\server\generated_proto_$GAMENAME"
 $MacroRequired "GAMENAME"
 
 $include "$SRCDIR\vpc_scripts\source_dll_base.vpc"
-$include "$SRCDIR\vpc_scripts\protobuf_builder.vpc"
+//$include "$SRCDIR\vpc_scripts\protobuf_builder.vpc"
 $Include "$SRCDIR\vpc_scripts\source_replay.vpc"	[$TF]
-$Include "$SRCDIR\game\protobuf_include.vpc"
+//$Include "$SRCDIR\game\protobuf_include.vpc"
 
 // Mapbase stuff
 $Include "$SRCDIR\game\server\server_mapbase.vpc"	[$MAPBASE]
@@ -25,7 +25,8 @@ $Configuration	"Debug"
 {
 	$General
 	{
-		$OutputDirectory		".\Debug_$GAMENAME"			[$WIN32]
+		//$OutputDirectory		".\Debug_$GAMENAME"			[$WIN32]
+		$OutputDirectory		"C:\Program Files (x86)\Steam\steamapps\sourcemods\kyloa\bin"			[$WIN32]
 		$IntermediateDirectory	".\Debug_$GAMENAME"			[$WIN32]
 
 		$OutputDirectory		".\Debug_$GAMENAME_360"		[$X360]
@@ -37,7 +38,8 @@ $Configuration	"Release"
 {
 	$General
 	{
-		$OutputDirectory		".\Release_$GAMENAME"		[$WIN32]
+		//$OutputDirectory		".\Release_$GAMENAME"		[$WIN32]
+		$OutputDirectory		"C:\Program Files (x86)\Steam\steamapps\sourcemods\kyloa\bin"		[$WIN32]
 		$IntermediateDirectory	".\Release_$GAMENAME"		[$WIN32]
 
 		$OutputDirectory		".\Release_$GAMENAME_360"	[$X360]

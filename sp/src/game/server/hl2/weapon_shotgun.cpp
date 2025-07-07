@@ -22,6 +22,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if ENABLE_HL2_WEAPONS
+
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
 #ifdef MAPBASE
@@ -105,6 +107,19 @@ BEGIN_DATADESC( CWeaponShotgun )
 	DEFINE_FIELD( m_bDelayedFire2, FIELD_BOOLEAN ),
 
 END_DATADESC()
+
+#endif //ENABLE_HL2_WEAPONS
+
+#ifndef ENABLE_HL2_WEAPONS
+
+class CWeaponShotgun
+{
+	DECLARE_CLASS_NOBASE(CWeaponShotgun);
+public:
+	DECLARE_ACTTABLE();
+};
+
+#endif //ENABLE_HL2_WEAPONS
 
 acttable_t	CWeaponShotgun::m_acttable[] = 
 {
@@ -246,6 +261,8 @@ int GetShotgunActtableCount()
 	return ARRAYSIZE(CWeaponShotgun::m_acttable);
 }
 #endif
+
+#if ENABLE_HL2_WEAPONS
 
 void CWeaponShotgun::Precache( void )
 {
@@ -912,3 +929,5 @@ void CWeaponShotgun::WeaponIdle( void )
 	}
 }
 */
+
+#endif //ENABLE_HL2_WEAPONS

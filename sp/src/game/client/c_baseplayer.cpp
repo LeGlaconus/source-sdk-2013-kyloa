@@ -1572,7 +1572,9 @@ Vector C_BasePlayer::GetChaseCamViewOffset( CBaseEntity *target )
 	{
 		if ( player->IsAlive() )
 		{
-			if ( player->GetFlags() & FL_DUCKING )
+			//Kyloa : water mechanic
+
+			if ( player->GetFlags() & FL_DUCKING || (GetWaterLevel() == WL_Eyes) )
 			{
 				return VEC_DUCK_VIEW_SCALED( player );
 			}
@@ -1878,7 +1880,9 @@ void C_BasePlayer::CalcInEyeCamView(Vector& eyeOrigin, QAngle& eyeAngles, float&
 #endif
 	{
 		C_BaseAnimating *pTargetAnimating = target->GetBaseAnimating();
-		if ( target->GetFlags() & FL_DUCKING )
+		//Kyloa : water mechanic
+
+		if ( target->GetFlags() & FL_DUCKING || (GetWaterLevel() == WL_Eyes))
 		{
 			eyeOrigin += pTargetAnimating ? VEC_DUCK_VIEW_SCALED( pTargetAnimating ) : VEC_DUCK_VIEW;
 		}
@@ -2188,7 +2192,10 @@ void C_BasePlayer::PostThink( void )
 	if ( IsAlive())
 	{
 		// Need to do this on the client to avoid prediction errors
-		if ( GetFlags() & FL_DUCKING )
+
+		//Kyloa : water mechanic
+
+		if ( GetFlags() & FL_DUCKING || (GetWaterLevel() == WL_Eyes))
 		{
 			SetCollisionBounds( VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX );
 		}

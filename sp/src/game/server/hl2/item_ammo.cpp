@@ -196,6 +196,7 @@ public:
 };
 LINK_ENTITY_TO_CLASS(item_box_mrounds, CItem_BoxMRounds);
 LINK_ENTITY_TO_CLASS(item_ammo_smg1, CItem_BoxMRounds);
+LINK_ENTITY_TO_CLASS(item_ammo_mp7, CItem_BoxMRounds);
 
 // ========================================================================
 //	>> LargeBoxMRounds
@@ -230,6 +231,7 @@ public:
 };
 LINK_ENTITY_TO_CLASS(item_large_box_mrounds, CItem_LargeBoxMRounds);
 LINK_ENTITY_TO_CLASS(item_ammo_smg1_large, CItem_LargeBoxMRounds);
+LINK_ENTITY_TO_CLASS(item_ammo_mp7_large, CItem_LargeBoxMRounds);
 
 // ========================================================================
 //	>> BoxLRounds
@@ -541,6 +543,7 @@ public:
 };
 LINK_ENTITY_TO_CLASS(item_ar2_grenade, CItem_AR2_Grenade);
 LINK_ENTITY_TO_CLASS(item_ammo_smg1_grenade, CItem_AR2_Grenade);
+LINK_ENTITY_TO_CLASS(item_ammo_mp7_grenade, CItem_AR2_Grenade);
 
 // ========================================================================
 //	>> BoxSniperRounds
@@ -610,6 +613,7 @@ public:
 	}
 };
 LINK_ENTITY_TO_CLASS(item_box_buckshot, CItem_BoxBuckshot);
+LINK_ENTITY_TO_CLASS(item_ammo_spas12, CItem_BoxBuckshot);
 
 // ========================================================================
 //	>> CItem_AR2AltFireRound
@@ -647,6 +651,97 @@ public:
 };
 
 LINK_ENTITY_TO_CLASS( item_ammo_ar2_altfire, CItem_AR2AltFireRound );
+
+//Kyloa
+class CItem_Staple : public CItem
+{
+	DECLARE_CLASS(CItem_Staple, CItem);
+
+	void Spawn()
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+
+		BaseClass::Spawn();
+	}
+	void Precache()
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_STAPLE, "Staple"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_staplegun, CItem_Staple);
+
+class CItem_StapleMedium : public CItem
+{
+public:
+	DECLARE_CLASS(CItem_StapleMedium, CItem);
+
+	void Spawn(void)
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+		BaseClass::Spawn();
+	}
+	void Precache(void)
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_STAPLE_MEDIUM, "Staple"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_staplegun_medium, CItem_StapleMedium);
+
+class CItem_StapleLarge : public CItem
+{
+public:
+	DECLARE_CLASS(CItem_StapleLarge, CItem);
+
+	void Spawn(void)
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+		BaseClass::Spawn();
+	}
+	void Precache(void)
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_STAPLE_LARGE, "Staple"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_staplegun_large, CItem_StapleLarge);
 
 // ==================================================================
 // Ammo crate which will supply infinite ammo of the specified type
@@ -776,6 +871,7 @@ const char *CItem_AmmoCrate::m_lpzModelNames[NUM_AMMO_CRATE_TYPES] =
 #endif
 };
 
+#if 0
 // Ammo type names
 const char *CItem_AmmoCrate::m_lpzAmmoNames[NUM_AMMO_CRATE_TYPES] =
 {
@@ -794,7 +890,25 @@ const char *CItem_AmmoCrate::m_lpzAmmoNames[NUM_AMMO_CRATE_TYPES] =
 	NULL,
 #endif
 };
+#endif //if 0
 
+//Kyloa :
+const char* CItem_AmmoCrate::m_lpzAmmoNames[NUM_AMMO_CRATE_TYPES] =
+{
+	"Staple"
+	"SMG1" //MP7
+	"AR2" //EnergyAR or straight up energy
+	"RPG_Round" //replace ?
+	"Buckshot" //Spas12
+	"Grenade" //remove ?
+	"357" //gun removed
+	"XBowBolt" //remove ?
+	"AR2AltFire" //gun removed
+	"SMG1_Grenade" //MP7_Grenade
+	"slam" //prob useless
+};
+
+#if 0
 // Ammo amount given per +use
 int CItem_AmmoCrate::m_nAmmoAmounts[NUM_AMMO_CRATE_TYPES] =
 {
@@ -813,7 +927,27 @@ int CItem_AmmoCrate::m_nAmmoAmounts[NUM_AMMO_CRATE_TYPES] =
 	NULL,	// Empty
 #endif
 };
+#endif //if 0
 
+int CItem_AmmoCrate::m_nAmmoAmounts[NUM_AMMO_CRATE_TYPES] =
+{
+	30,	// Staple Gun
+	300,	// MP7
+	300,	// Energy AR
+	3,		// RPG rounds remove ?
+	120,	// SPAS12
+	5,		// Grenades remove ?
+	50,		// 357 gun removed
+	50,		// Crossbow remove ?
+	3,		// AR2 alt-fire gun removed
+	5,		// MP7 grenade
+#ifdef MAPBASE
+	5,		// SLAM
+	NULL,	// Empty
+#endif
+};
+
+//Kyloa : might want to change that
 const char *CItem_AmmoCrate::m_pGiveWeapon[NUM_AMMO_CRATE_TYPES] =
 {
 	NULL,	// Pistol

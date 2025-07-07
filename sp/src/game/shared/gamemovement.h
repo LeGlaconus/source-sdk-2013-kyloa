@@ -233,7 +233,8 @@ protected:
 	float			SplineFraction( float value, float scale );
 
 	void			CategorizeGroundSurface( trace_t &pm );
-
+	
+	//Kyloa Confirm TODO : inline ?
 	bool			InWater( void );
 
 	// Commander view movement

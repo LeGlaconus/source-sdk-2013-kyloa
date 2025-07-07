@@ -21,6 +21,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if ENABLE_HL2_WEAPONS
+
 #define	PISTOL_FASTEST_REFIRE_TIME		0.1f
 #define	PISTOL_FASTEST_DRY_REFIRE_TIME	0.2f
 
@@ -138,6 +140,17 @@ BEGIN_DATADESC( CWeaponPistol )
 	DEFINE_FIELD( m_nNumShotsFired,			FIELD_INTEGER ),
 
 END_DATADESC()
+
+#endif //HL2_ENABLE_WEAPONS
+
+#ifndef HL2_ENABLE_WEAPONS
+class CWeaponPistol
+{
+	DECLARE_CLASS_NOBASE(CWeaponPistol);
+public:
+	DECLARE_ACTTABLE();
+};
+#endif //ifndef HL2_ENABLE_WEAPONS
 
 acttable_t	CWeaponPistol::m_acttable[] = 
 {
@@ -274,7 +287,6 @@ acttable_t	CWeaponPistol::m_acttable[] =
 #endif
 };
 
-
 IMPLEMENT_ACTTABLE( CWeaponPistol );
 
 #ifdef MAPBASE
@@ -289,6 +301,8 @@ int GetPistolActtableCount()
 	return ARRAYSIZE(CWeaponPistol::m_acttable);
 }
 #endif
+
+#if HL2_ENABLE_WEAPONS
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -553,3 +567,5 @@ void CWeaponPistol::AddViewKick( void )
 	//Add it to the view punch
 	pPlayer->ViewPunch( viewPunch );
 }
+
+#endif //ENABLE_HL2_WEAPONS

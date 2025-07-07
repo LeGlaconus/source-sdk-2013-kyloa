@@ -45,6 +45,10 @@ public:
 	CNetworkVar( Vector, m_vecLocatorOrigin );
 #endif
 
+	//Kyloa : energy
+	CNetworkVar(int, m_iPlayerEnergy);
+	CNetworkVar(int, m_iMaxPlayerEnergy);
+
 	// Ladder related data
 	CNetworkVar( EHANDLE, m_hLadder );
 	LadderMove_t			m_LadderMove;

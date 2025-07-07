@@ -25,6 +25,11 @@ BEGIN_RECV_TABLE_NOBASE( C_HL2PlayerLocalData, DT_HL2Local )
 	RecvPropBool( RECVINFO(m_bDisplayReticle) ),
 	RecvPropBool( RECVINFO(m_bStickyAutoAim) ),
 	RecvPropBool( RECVINFO(m_bAutoAimTarget) ),
+
+	//Kyloa : energy
+	RecvPropInt(RECVINFO(m_iPlayerEnergy)),
+	RecvPropInt(RECVINFO(m_iMaxPlayerEnergy)),
+
 #ifdef HL2_EPISODIC
 	RecvPropFloat( RECVINFO(m_flFlashBattery) ),
 	RecvPropVector( RECVINFO(m_vecLocatorOrigin) ),
@@ -48,5 +53,10 @@ C_HL2PlayerLocalData::C_HL2PlayerLocalData()
 	m_flFlashBattery = 0.0f;
 	m_vecLocatorOrigin = vec3_origin;
 #endif
+
+	//Kyloa : energy
+	m_iPlayerEnergy = 0;
+	m_iMaxPlayerEnergy = 0;
+
 }
 

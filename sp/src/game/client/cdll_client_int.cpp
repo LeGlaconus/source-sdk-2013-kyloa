@@ -173,6 +173,14 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
+//======
+//Kyloa FMOD :
+//======
+
+#ifdef KYLOA_FMOD
+#include "fmod_manager.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -1077,6 +1085,11 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	g_pClientMode->Enable();
 
+	//Kyloa FMOD
+	#ifdef KYLOA_FMOD
+	FMODManager()->InitFMOD();
+	#endif
+
 	if ( !view )
 	{
 		view = ( IViewRender * )&g_DefaultViewRender;
@@ -1237,6 +1250,11 @@ void CHLClient::Shutdown( void )
 
 	g_pClientMode->Disable();
 	g_pClientMode->Shutdown();
+
+	//Kyloa FMOD
+	#ifdef KYLOA_FMOD
+	FMODManager()->ExitFMOD();
+	#endif
 
 	input->Shutdown_All();
 	C_BaseTempEntity::ClearDynamicTempEnts();
@@ -1548,6 +1566,12 @@ void CHLClient::View_Render( vrect_t *rect )
 {
 	VPROF( "View_Render" );
 
+	//Kyloa FMOD
+	//Kyloa TODO : find a better way to do this before we ship the mod
+	#ifdef KYLOA_FMOD
+	FMODManager()->FadeThink();
+	#endif
+
 	// UNDONE: This gets hit at startup sometimes, investigate - will cause NaNs in calcs inside Render()
 	if ( rect->width == 0 || rect->height == 0 )
 		return;
@@ -1812,6 +1836,13 @@ void CHLClient::LevelShutdown( void )
 	CReplayRagdollRecorder::Instance().Shutdown();
 	CReplayRagdollCache::Instance().Shutdown();
 #endif
+
+	//Kyloa FMOD
+	//Kyloa TODO : find a better way to do this
+	#ifdef KYLOA_FMOD
+	FMODManager()->StopAmbientSound(false);
+	#endif
+
 }
 
 

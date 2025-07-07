@@ -39,7 +39,7 @@ public:
 
 	void					ClientThink( void );
 	void					OnDataChanged( DataUpdateType_t type );
-	bool					ImportantRagdoll( void ) { return m_bImportanRagdoll;	}
+	bool					ImportantRagdoll( void ) { return m_bImportantRagdoll;	}
 
 private:
 	C_AI_BaseNPC( const C_AI_BaseNPC & ); // not defined, not accessible
@@ -54,7 +54,7 @@ private:
 	bool m_bIsMoving;
 	bool m_bFadeCorpse;
 	bool m_bSpeedModActive;
-	bool m_bImportanRagdoll;
+	bool m_bImportantRagdoll;
 };
 
 

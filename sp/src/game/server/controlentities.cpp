@@ -29,7 +29,8 @@ private:
 	int m_iTrack;  // CD track to change to when fired
 };
 
-LINK_ENTITY_TO_CLASS( target_cdaudio, CTargetCDAudioRep );
+//Kyloa : obsolete
+//LINK_ENTITY_TO_CLASS( target_cdaudio, CTargetCDAudioRep );
 
 BEGIN_DATADESC( CTargetCDAudioRep )
 

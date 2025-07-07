@@ -6,7 +6,8 @@
 
 #include "cbase.h"
 
-#if 0
+//Kyloa : Compiling it because why not
+#if 1
 #include "mp3player.h"
 #include "KeyValues.h"
 #include "filesystem.h"
@@ -92,7 +93,8 @@ void MP3Player_Destroy()
 	}
 }
 
-static ConCommand mp3( "mp3", mp3_f, "Show/hide mp3 player UI." );
+//Kyloa : It'll probably stay till the release so I'm making that a cheat
+static ConCommand mp3( "mp3", mp3_f, "Show/hide mp3 player UI.", FCVAR_CHEAT);
 
 //-----------------------------------------------------------------------------
 // Purpose: This assumes artist/album/file.mp3!!!

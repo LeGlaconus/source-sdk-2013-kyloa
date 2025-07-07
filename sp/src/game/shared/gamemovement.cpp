@@ -1371,6 +1371,9 @@ void CGameMovement::WaterJump( void )
 	mv->m_vecVelocity[1] = player->m_vecWaterJumpVel[1];
 }
 
+//Kyloa TODO : scale down player hitbox
+//Kyloa TODO : dash, make player or current weapon transmit if it's ok to dash
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -1388,9 +1391,9 @@ void CGameMovement::WaterMove( void )
 
 	AngleVectors (mv->m_vecViewAngles, &forward, &right, &up);  // Determine movement angles
 
-	//
+	
 	// user intentions
-	//
+	
 	for (i=0 ; i<3 ; i++)
 	{
 		wishvel[i] = forward[i]*mv->m_flForwardMove + right[i]*mv->m_flSideMove;
@@ -2041,6 +2044,16 @@ void CGameMovement::FullWalkMove( )
 		// See if we are still in water?
 		CheckWater();
 		return;
+	}
+
+	//Kyloa : making the player's hitbox smaller when fully immerged underwater
+	//Kyloa Confirm TODO : check if at eye level or waist level ?
+	if (player->GetWaterLevel() == WL_Eyes)
+	{
+		//DevMsg("eye level\n");
+
+		if(!player->m_Local.m_bDucked)
+			player->SetCollisionBounds(VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
 	}
 
 	// If we are swimming in the water, see if we are nudging against a place we can jump up out
@@ -4207,8 +4220,11 @@ void CGameMovement::FinishUnDuckJump( trace_t &trace )
 //-----------------------------------------------------------------------------
 void CGameMovement::FinishDuck( void )
 {
-	if ( player->GetFlags() & FL_DUCKING )
-		return;
+	//Kyloa : this should solve the quantum crouch glitch
+	//Kyloa Confirm : does it work ?
+
+	//if ( player->GetFlags() & FL_DUCKING )
+	//	return;
 
 	player->AddFlag( FL_DUCKING );
 	player->m_Local.m_bDucked = true;

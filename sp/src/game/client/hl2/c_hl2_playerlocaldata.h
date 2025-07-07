@@ -46,6 +46,11 @@ public:
 	Vector	m_vecLocatorOrigin;
 #endif
 
+	//Kyloa : energy amount
+	int		m_iPlayerEnergy;
+	int		m_iMaxPlayerEnergy;
+	//Kyloa TODO : maximum capacity + more info
+
 	// Ladder related data
 	EHANDLE			m_hLadder;
 	LadderMove_t	m_LadderMove;

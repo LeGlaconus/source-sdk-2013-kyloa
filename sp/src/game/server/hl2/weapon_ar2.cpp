@@ -34,6 +34,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if ENABLE_HL2_WEAPONS
+
 ConVar sk_weapon_ar2_alt_fire_radius( "sk_weapon_ar2_alt_fire_radius", "10" );
 ConVar sk_weapon_ar2_alt_fire_duration( "sk_weapon_ar2_alt_fire_duration", "2" );
 ConVar sk_weapon_ar2_alt_fire_mass( "sk_weapon_ar2_alt_fire_mass", "150" );
@@ -54,6 +56,20 @@ END_SEND_TABLE()
 
 LINK_ENTITY_TO_CLASS( weapon_ar2, CWeaponAR2 );
 PRECACHE_WEAPON_REGISTER(weapon_ar2);
+
+#endif //ENABLE_HL2_WEAPONS
+
+#ifndef ENABLE_HL2_WEAPONS
+
+class CWeaponAR2
+{
+	DECLARE_CLASS_NOBASE(CWeaponAR2);
+public:
+	DECLARE_ACTTABLE();
+};
+
+#endif // ENABLE_HL2_WEAPONS
+
 
 acttable_t	CWeaponAR2::m_acttable[] = 
 {
@@ -202,6 +218,8 @@ int GetAR2ActtableCount()
 	return ARRAYSIZE(CWeaponAR2::m_acttable);
 }
 #endif
+
+#if ENABLE_HL2_WEAPONS
 
 CWeaponAR2::CWeaponAR2( )
 {
@@ -635,3 +653,5 @@ const WeaponProficiencyInfo_t *CWeaponAR2::GetProficiencyValues()
 
 	return proficiencyTable;
 }
+
+#endif //ENABLE_HL2_WEAPONS

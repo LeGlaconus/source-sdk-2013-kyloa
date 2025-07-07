@@ -2416,7 +2416,7 @@ public:
 	CNetworkVar( bool,  m_bPerformAvoidance );
 	CNetworkVar( bool,	m_bIsMoving );
 	CNetworkVar( bool,  m_bFadeCorpse );
-	CNetworkVar( bool,  m_bImportanRagdoll );
+	CNetworkVar( bool,  m_bImportantRagdoll );
 
 	CNetworkVar( bool,  m_bSpeedModActive );
 	CNetworkVar( int,   m_iSpeedModRadius );

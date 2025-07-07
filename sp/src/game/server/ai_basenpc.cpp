@@ -632,7 +632,7 @@ void CAI_BaseNPC::Event_Killed( const CTakeDamageInfo &info )
 
 	if ( m_bFadeCorpse )
 	{
-		m_bImportanRagdoll = RagdollManager_SaveImportant( this );
+		m_bImportantRagdoll = RagdollManager_SaveImportant( this );
 	}
 	
 	// Make sure this condition is fired too (OnTakeDamage breaks out before this happens on death)
@@ -7554,12 +7554,13 @@ void CAI_BaseNPC::SetupVPhysicsHull()
 		{
 			pPhysObj->SetMass( mass );
 		}
-#if _DEBUG
+//Kyloa : removing this debug only block
+//#if _DEBUG
 		else
 		{
 			DevMsg("Warning: %s has no physical mass\n", STRING(GetModelName()));
 		}
-#endif
+//#endif
 		IPhysicsShadowController *pController = pPhysObj->GetShadowController();
 		float avgsize = (WorldAlignSize().x + WorldAlignSize().y) * 0.5;
 		pController->SetTeleportDistance( avgsize * 0.5 );
@@ -10978,30 +10979,6 @@ Vector CAI_BaseNPC::GetActualShootPosition( const Vector &shootOrigin )
 	Vector vecEnemyOffset = GetEnemy()->BodyTarget( shootOrigin ) - GetEnemy()->GetAbsOrigin();
 	Vector vecTargetPosition = vecEnemyOffset + vecEnemyLKP;
 
-#ifdef PORTAL
-	// Check if it's also visible through portals
-	CProp_Portal *pPortal = FInViewConeThroughPortal( vecEnemyLKP );
-	if ( pPortal )
-	{
-		// Get the target's position through portals
-		Vector vecEnemyOffsetTransformed;
-		Vector vecEnemyLKPTransformed;
-		UTIL_Portal_VectorTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vecEnemyOffset, vecEnemyOffsetTransformed );
-		UTIL_Portal_PointTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vecEnemyLKP, vecEnemyLKPTransformed );
-		Vector vecTargetPositionTransformed = vecEnemyOffsetTransformed + vecEnemyLKPTransformed;
-
-		// Get the distance to the target with and without portals
-		float fDistanceToEnemyThroughPortalSqr = GetAbsOrigin().DistToSqr( vecTargetPositionTransformed );
-		float fDistanceToEnemySqr = GetAbsOrigin().DistToSqr( vecTargetPosition );
-
-		if ( fDistanceToEnemyThroughPortalSqr < fDistanceToEnemySqr || !FInViewCone( vecEnemyLKP ) || !FVisible( vecEnemyLKP ) )
-		{
-			// We're better off shooting through the portals
-			vecTargetPosition = vecTargetPositionTransformed;
-		}
-	}
-#endif
-
 	// lead for some fraction of a second.
 	return (vecTargetPosition + ( GetEnemy()->GetSmoothedVelocity() * ai_lead_time.GetFloat() ));
 }
@@ -11801,7 +11778,7 @@ void CAI_BaseNPC::PickupItem( CBaseEntity *pItem )
 			UTIL_Remove( pItem );
 		}
 	}
-	else if ( FClassnameIs(pItem, "item_ammo_ar2_altfire") || FClassnameIs(pItem, "item_ammo_smg1_grenade") ||
+	else if ( FClassnameIs(pItem, "item_ammo_ar2_altfire") || FClassnameIs(pItem, "item_ammo_mp7_grenade")  || FClassnameIs(pItem, "item_ammo_smg1_grenade") ||
 		FClassnameIs(pItem, "weapon_frag") )
 	{
 		AddGrenades( 1 );
@@ -12174,7 +12151,7 @@ BEGIN_DATADESC( CAI_BaseNPC )
 	DEFINE_FIELD( m_iSpeedModSpeed,				FIELD_INTEGER ),
 	DEFINE_FIELD( m_hEnemyFilter,				FIELD_EHANDLE ),
 	DEFINE_KEYFIELD( m_iszEnemyFilterName,		FIELD_STRING, "enemyfilter" ),
-	DEFINE_FIELD( m_bImportanRagdoll,			FIELD_BOOLEAN ),
+	DEFINE_FIELD( m_bImportantRagdoll,			FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bPlayerAvoidState,			FIELD_BOOLEAN ),
 
 #ifdef MAPBASE
@@ -12436,7 +12413,7 @@ IMPLEMENT_SERVERCLASS_ST( CAI_BaseNPC, DT_AI_BaseNPC )
 	SendPropBool( SENDINFO( m_bSpeedModActive ) ),
 	SendPropInt( SENDINFO( m_iSpeedModRadius ) ),
 	SendPropInt( SENDINFO( m_iSpeedModSpeed ) ),
-	SendPropBool( SENDINFO( m_bImportanRagdoll ) ),
+	SendPropBool( SENDINFO( m_bImportantRagdoll ) ),
 	SendPropFloat( SENDINFO( m_flTimePingEffect ) ),
 END_SEND_TABLE()
 

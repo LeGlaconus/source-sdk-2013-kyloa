@@ -407,10 +407,6 @@ void CNPC_Alyx::Precache()
 	CLASSNAME_SMG1 = gm_iszSMG1Classname;
 	CLASSNAME_SHOTGUN = gm_iszShotgunClassname;
 	CLASSNAME_AR2 = gm_iszAR2Classname;
-#else
-	CLASSNAME_SMG1 = AllocPooledString( "weapon_smg1" );
-	CLASSNAME_SHOTGUN = AllocPooledString( "weapon_shotgun" );
-	CLASSNAME_AR2 = AllocPooledString( "weapon_ar2" );
 #endif
 }	
 
@@ -863,7 +859,8 @@ void CNPC_Alyx::GatherConditions()
 	{
 		CSound *pSound = GetBestSound(); 
 
-		if ( IsInAVehicle() == false )  // For now, don't do these animations while in the vehicle
+		//if ( IsInAVehicle() == false )  // Kyloa change
+		if ( !IsInAVehicle() )  // For now, don't do these animations while in the vehicle
 		{
 			if( (pSound->SoundTypeNoContext() & SOUND_COMBAT) && (pSound->SoundContext() & SOUND_CONTEXT_EXPLOSION) )
 			{

@@ -392,6 +392,32 @@ ConVar	sk_max_gauss_round		( "sk_max_gauss_round", "0", FCVAR_REPLICATED );
 ConVar	sk_npc_dmg_gunship			( "sk_npc_dmg_gunship", "0", FCVAR_REPLICATED );
 ConVar	sk_npc_dmg_gunship_to_plr	( "sk_npc_dmg_gunship_to_plr", "0", FCVAR_REPLICATED );
 
+//Kyloa
+ConVar sk_plr_dmg_staplegun("sk_plr_dmg_staplegun", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_staplegun("sk_npc_dmg_staplegun", "0", FCVAR_REPLICATED);
+ConVar sk_max_staplegun("sk_max_staplegun", "0", FCVAR_REPLICATED);
+
+ConVar sk_staplegun_firerate("sk_staplegun_firerate", "0", FCVAR_REPLICATED);
+
+//Kyloa : staplegun melee shit
+ConVar sk_plr_dmg_staplegun_melee("sk_plr_dmg_staplegun_melee", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_staplegun_melee("sk_npc_dmg_staplegun_melee", "0", FCVAR_REPLICATED);
+ConVar sk_staplegun_firerate_melee("sk_staplegun_firerate_melee", "0", FCVAR_REPLICATED);
+ConVar sk_staplegun_meleerange("sk_staplegun_meleerange", "0", FCVAR_REPLICATED);
+
+ConVar sk_plr_dmg_energyar("sk_plr_dmg_energyar", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_energyar("sk_npc_dmg_energyar", "0", FCVAR_REPLICATED);
+ConVar sk_max_energyar("sk_max_energyar", "0", FCVAR_REPLICATED);
+
+//Kyloa : glock ammo stuff
+ConVar sk_plr_dmg_glock("sk_plr_dmg_glock", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_glock("sk_npc_dmg_glock", "0", FCVAR_REPLICATED);
+ConVar sk_max_glock("sk_max_glock", "0", FCVAR_REPLICATED);
+
+//Kyloa : Staple energy stuff
+//ConVar sk_max_staplegun_energy("sk_max_staplegun_energy", "0", FCVAR_REPLICATED);
+
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : iDmgType - 
@@ -2141,6 +2167,12 @@ CAmmoDef *GetAmmoDef()
 		def.AddAmmoType("GaussEnergy",		DMG_SHOCK,					TRACER_NONE,			"sk_jeep_gauss_damage",		"sk_jeep_gauss_damage", "sk_max_gauss_round", BULLET_IMPULSE(650, 8000), 0 ); // hit like a 10kg weight at 400 in/s
 		def.AddAmmoType("CombineCannon",	DMG_BULLET,					TRACER_LINE,			"sk_npc_dmg_gunship_to_plr", "sk_npc_dmg_gunship", NULL, 1.5 * 750 * 12, 0 ); // hit like a 1.5kg weight at 750 ft/s
 		def.AddAmmoType("AirboatGun",		DMG_AIRBOAT,				TRACER_LINE,			"sk_plr_dmg_airboat",		"sk_npc_dmg_airboat",		NULL,					BULLET_IMPULSE(10, 600), 0 );
+
+		//Kyloa
+		def.AddAmmoType("Staple",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_staplegun",	"sk_npc_dmg_staplegun",		"sk_max_staplegun",		BULLET_IMPULSE(200, 1225), 0);
+		//def.AddAmmoType("StapleEnergy",		DMG_GENERIC,				TRACER_NONE,			0,	0,	"sk_max_staplegun_energy",	0, 0);
+		def.AddAmmoType("EnergyAr",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_energyar",		"sk_npc_dmg_energyar",	"sk_max_energyar",		BULLET_IMPULSE(200, 1225), 0);
+		def.AddAmmoType("Glock",			DMG_BULLET,					TRACER_LINE,			"sk_plr_dmg_glock",			"sk_npc_dmg_glock",		"sk_max_glock",			BULLET_IMPULSE(200, 1225), 0);
 
 		//=====================================================================
 		// STRIDER MINIGUN DAMAGE - Pull up a chair and I'll tell you a tale.

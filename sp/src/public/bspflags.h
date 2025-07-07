@@ -21,6 +21,8 @@
 // these definitions also need to be in q_shared.h!
 
 // lower bits are stronger, and will eat weaker brushes completely
+
+
 #define	CONTENTS_EMPTY			0		// No contents
 
 #define	CONTENTS_SOLID			0x1		// an eye is never valid in a solid
@@ -75,6 +77,8 @@
 #define	CONTENTS_LADDER			0x20000000
 #define CONTENTS_HITBOX			0x40000000	// use accurate hitboxes on trace
 
+//Kyloa : last bit is unused
+#define CONTENTS_LASTBIT		0x80000000
 
 // NOTE: These are stored in a short in the engine now.  Don't use more than 16 bits
 #define	SURF_LIGHT		0x0001		// value will hold the light strength

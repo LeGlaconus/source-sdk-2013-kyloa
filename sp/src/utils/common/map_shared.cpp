@@ -35,7 +35,10 @@ ChunkFileResult_t LoadEntityKeyCallback(const char *szKey, const char *szValue, 
 		}
 		else if (!stricmp(szValue, "func_water"))
 		{
-			pLoadEntity->nBaseContents = CONTENTS_WATER;
+			Msg("Are you sure you want to use func_water ? Try using func_water_analog instead.\n");
+			// Kyloa : taken from YBSP
+			// apparently unnecessary, nobody should use func_water anyways
+			//pLoadEntity->nBaseContents = CONTENTS_WATER;
 		}
 	}
 	else if (!stricmp(szKey, "id"))

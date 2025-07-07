@@ -632,6 +632,8 @@ END_SCRIPTDESC();
 
 CHL2_Player::CHL2_Player()
 {
+	m_bReadyToTransmitPlayerEnergy = false;
+
 	m_nNumMissPositions	= 0;
 	m_pPlayerAISquad = 0;
 	m_bSprintEnabled = true;
@@ -2531,6 +2533,69 @@ bool CHL2_Player::SuitPower_ShouldRecharge( void )
 	return true;
 }
 
+
+//---------------
+// Kyloa : energy
+//---------------
+
+int CHL2_Player::GetEnergy()
+{
+	return m_HL2Local.m_iPlayerEnergy;
+}
+
+void CHL2_Player::SetEnergy(int amnt)
+{
+	if (amnt < 0)
+	{
+		DevMsg("Energy set to %i (<0) ! Not accepting \n", amnt);
+		return;
+	}
+
+	if (amnt > GetMaxEnergy())
+	{
+		DevMsg("Energy set to something higher than the maximum capacity : %i capacity : %i", GetEnergy(), GetMaxEnergy());
+		m_HL2Local.m_iPlayerEnergy = GetMaxEnergy();
+		return;
+	}
+
+	m_HL2Local.m_iPlayerEnergy = amnt;
+}
+
+void CHL2_Player::AddEnergy(int amnt)
+{
+	if (amnt == 0)
+	{
+		return;
+	}
+
+	if (GetEnergy() + amnt > GetMaxEnergy())
+	{
+		DevMsg("Energy set to something higher than the maximum capacity : %i capacity : %i", GetEnergy(), GetMaxEnergy());
+		return;
+	}
+
+	m_HL2Local.m_iPlayerEnergy += amnt;
+}
+
+int CHL2_Player::GetMaxEnergy()
+{
+	if (this == nullptr)
+		return -1;
+
+	return m_HL2Local.m_iMaxPlayerEnergy;
+}
+
+void CHL2_Player::SetMaxEnergy(int amnt)
+{
+	if (amnt <= 0)
+	{
+		DevMsg("Max energy set to %i (<=0 !)\n", amnt);
+		return;
+	}
+
+	m_HL2Local.m_iMaxPlayerEnergy = amnt;
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 ConVar	sk_battery( "sk_battery","0" );			
@@ -3799,21 +3864,31 @@ bool CHL2_Player::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 	if (pVehicle && !pPlayer->UsingStandardWeaponsInVehicle())
 		return false;
 
+	//Kyloa : energy weapons can be switched to even if they don't have any ammo left
+	CBaseCombatWeapon* pActiveWeapon = GetActiveWeapon();
+	
+	if (pActiveWeapon)
+		if (pActiveWeapon->GetSpawnFlags() & SF_ENERGY_WEAPON)
+			return true;
+	
 	if ( !pWeapon->HasAnyAmmo() && !GetAmmoCount( pWeapon->m_iPrimaryAmmoType ) )
 		return false;
 
 	if ( !pWeapon->CanDeploy() )
 		return false;
 
-	if ( GetActiveWeapon() )
+	//if ( GetActiveWeapon() )
+	if ( pActiveWeapon )
 	{
-		if ( PhysCannonGetHeldEntity( GetActiveWeapon() ) == pWeapon && 
+		//if ( PhysCannonGetHeldEntity( GetActiveWeapon() ) == pWeapon && 
+		if ( PhysCannonGetHeldEntity( pActiveWeapon ) == pWeapon && 
 			Weapon_OwnsThisType( pWeapon->GetClassname(), pWeapon->GetSubType()) )
 		{
 			return true;
 		}
 
-		if ( !GetActiveWeapon()->CanHolster() )
+		//if ( !GetActiveWeapon()->CanHolster() )
+		if ( !pActiveWeapon->CanHolster() )
 			return false;
 	}
 

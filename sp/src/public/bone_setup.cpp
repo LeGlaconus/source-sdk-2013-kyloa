@@ -5924,7 +5924,11 @@ const char *Studio_GetDefaultSurfaceProps( CStudioHdr *pstudiohdr )
 
 float Studio_GetMass( CStudioHdr *pstudiohdr )
 {
-	return pstudiohdr->mass();
+	//Kyloa todo remove when fixed:
+	//if (pstudiohdr != nullptr)
+		return pstudiohdr->mass();
+	//else
+	//	return 0;
 }
 
 //-----------------------------------------------------------------------------

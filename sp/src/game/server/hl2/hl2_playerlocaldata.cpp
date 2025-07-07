@@ -28,6 +28,11 @@ BEGIN_SEND_TABLE_NOBASE( CHL2PlayerLocalData, DT_HL2Local )
 	SendPropBool( SENDINFO(m_bDisplayReticle) ),
 	SendPropBool( SENDINFO(m_bStickyAutoAim) ),
 	SendPropBool( SENDINFO(m_bAutoAimTarget) ),
+
+	//Kyloa : energy 
+	SendPropInt( SENDINFO(m_iPlayerEnergy)),
+	SendPropInt( SENDINFO(m_iMaxPlayerEnergy)),
+
 #ifdef HL2_EPISODIC
 	SendPropFloat( SENDINFO(m_flFlashBattery) ),
 	SendPropVector( SENDINFO(m_vecLocatorOrigin) ),
@@ -48,6 +53,11 @@ BEGIN_SIMPLE_DATADESC( CHL2PlayerLocalData )
 	DEFINE_FIELD( m_flFlashBattery, FIELD_FLOAT ),
 	DEFINE_FIELD( m_vecLocatorOrigin, FIELD_POSITION_VECTOR ),
 #endif
+
+	//Kyloa : energy
+	DEFINE_FIELD(m_iPlayerEnergy, FIELD_INTEGER),
+	DEFINE_FIELD(m_iMaxPlayerEnergy, FIELD_INTEGER),
+
 	// Ladder related stuff
 	DEFINE_FIELD( m_hLadder, FIELD_EHANDLE ),
 	DEFINE_EMBEDDED( m_LadderMove ),
@@ -65,5 +75,8 @@ CHL2PlayerLocalData::CHL2PlayerLocalData()
 #ifdef HL2_EPISODIC
 	m_flFlashBattery = 0.0f;
 #endif
+	//Kyloa : energy
+	m_iPlayerEnergy = 0;
+	m_iMaxPlayerEnergy = 0;
 }
 

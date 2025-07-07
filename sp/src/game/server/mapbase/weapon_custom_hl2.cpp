@@ -32,6 +32,8 @@ extern acttable_t* GetCrossbowActtable();
 extern int GetCrossbowActtableCount();
 extern acttable_t* GetAnnabelleActtable();
 extern int GetAnnabelleActtableCount();
+extern acttable_t* GetStapleGunActtable();
+extern int GetStapleGunActtableCount();
 
 
 
@@ -495,6 +497,8 @@ public:
 		ACTTABLE_AR2,
 		ACTTABLE_CROSSBOW,
 		ACTTABLE_ANNABELLE,
+		//Kyloa
+		ACTTABLE_STAPLEGUN,
 
 		NUM_GUN_ACT_TABLES
 	};
@@ -552,6 +556,10 @@ acttable_t* CHLCustomWeaponGun::ActivityList(void)
 	case ACTTABLE_ANNABELLE:
 		return GetAnnabelleActtable();
 		break;
+	//Kyloa
+	case ACTTABLE_STAPLEGUN:
+		return GetStapleGunActtable();
+		break;
 	}
 }
 
@@ -581,6 +589,10 @@ int CHLCustomWeaponGun::ActivityListCount(void)
 	case ACTTABLE_ANNABELLE:
 		return GetAnnabelleActtableCount();
 		break;
+		//Kyloa
+	case ACTTABLE_STAPLEGUN:
+		return GetStapleGunActtableCount();
+		break;
 	}
 }
 
@@ -602,6 +614,9 @@ acttable_t* CHLCustomWeaponGun::GetBackupActivityList(void)
 	case ACTTABLE_ANNABELLE:
 		return GetShotgunActtable();
 		break;
+	//Kyloa
+	case ACTTABLE_STAPLEGUN:
+		return GetStapleGunActtable();
 	}
 }
 
@@ -623,6 +638,9 @@ int CHLCustomWeaponGun::GetBackupActivityListCount(void)
 	case ACTTABLE_ANNABELLE:
 		return GetShotgunActtableCount();
 		break;
+	//Kyloa
+	case ACTTABLE_STAPLEGUN:
+		return GetStapleGunActtableCount();
 	}
 }
 
@@ -657,6 +675,8 @@ bool CHLCustomWeaponGun::Cache_s::Parse(KeyValues* pKVWeapon)
 		"ar2",
 		"crossbow",
 		"annabelle",
+		//Kyloa
+		"staplegun",
 	};
 
 	KeyValues* pkvData = pKVWeapon->FindKey("CustomData");

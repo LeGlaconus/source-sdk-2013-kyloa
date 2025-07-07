@@ -175,6 +175,17 @@ public:
 	bool SuitPower_ShouldRecharge( void );
 	float SuitPower_GetCurrentPercentage( void ) { return m_HL2Local.m_flSuitPower; }
 	
+	//---------------
+	// Kyloa : energy
+	//---------------
+
+	int GetEnergy();
+	void SetEnergy(int amnt);
+	void AddEnergy(int amnt);
+
+	int GetMaxEnergy();
+	void SetMaxEnergy(int amnt);
+
 	void SetFlashlightEnabled( bool bState );
 
 #ifdef MAPBASE
@@ -388,6 +399,10 @@ private:
 	bool				m_bSprintEnabled;		// Used to disable sprint temporarily
 	bool				m_bIsAutoSprinting;		// A proxy for holding down the sprint key.
 	float				m_fAutoSprintMinTime;	// Minimum time to maintain autosprint regardless of player speed. 
+
+	//Kyloa : energy
+	bool				m_bReadyToTransmitPlayerEnergy = false;
+
 
 	CNetworkVar( bool, m_fIsSprinting );
 	CNetworkVarForDerived( bool, m_fIsWalking );

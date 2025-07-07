@@ -558,6 +558,10 @@ enum
 	BLOOD_COLOR_ZOMBIE,			// FIXME: Move to Base HL2
 	BLOOD_COLOR_ANTLION_WORKER,
 #endif // HL2_EPISODIC
+
+	//Kyloa
+	BLOOD_COLOR_CRAWLER,
+
 };
 
 //-----------------------------------------------------------------------------
@@ -1070,5 +1074,11 @@ enum
 	COMMENTARY_TYPE_SCENE,		// Play a VCD file
 };
 #endif
+
+//Kyloa : energy defs
+constexpr int ENERGY_MAX_STAPLEGUN = 6;
+constexpr int ENERGY_MAX_ENERGYAR  = 16;
+
+
 
 #endif // SHAREDDEFS_H

@@ -44,7 +44,8 @@
 
 
 // upper design bounds
-#define MIN_MAP_DISP_POWER		2	// Minimum and maximum power a displacement can be.
+//#define MIN_MAP_DISP_POWER		2	// Minimum and maximum power a displacement can be.
+#define MIN_MAP_DISP_POWER		1	// Kyloa : lowering it because stock Hammer supports these
 #define MAX_MAP_DISP_POWER		4	
 
 // Max # of neighboring displacement touching a displacement's corner.
@@ -59,11 +60,13 @@
 // 16 bit short limits
 #define	MAX_MAP_MODELS					1024
 #define	MAX_MAP_BRUSHES					8192
+
 #ifdef MAPBASE
 #define	MAX_MAP_ENTITIES				65536 // According to ficool2, this limit is bogus/not enforced by the engine and can be "safely" raised.
 #else
 #define	MAX_MAP_ENTITIES				8192
 #endif
+
 #define	MAX_MAP_TEXINFO					12288
 #define MAX_MAP_TEXDATA					2048
 #define MAX_MAP_DISPINFO				2048
@@ -91,9 +94,12 @@
 #define MAX_MAP_PORTALVERTS				128000
 #define	MAX_MAP_EDGES					256000
 #define	MAX_MAP_SURFEDGES				512000
-#define	MAX_MAP_LIGHTING				0x1000000
-#define	MAX_MAP_VISIBILITY				0x1000000			// increased BSPVERSION 7
-#define	MAX_MAP_TEXTURES				1024
+//#define	MAX_MAP_LIGHTING				0x1000000
+#define	MAX_MAP_LIGHTING				0x1000000 //Kyloa : wouterpleizier commit, Todo might need to change
+//#define	MAX_MAP_VISIBILITY				0x1000000			// increased BSPVERSION 7
+#define	MAX_MAP_VISIBILITY				0x1000000 //Kyloa : wouterpleizier commit, Todo might need to change
+//#define	MAX_MAP_TEXTURES				1024
+#define	MAX_MAP_TEXTURES				1024 // Kyloa Todo Confirm : Raise this ?
 #ifdef MAPBASE
 #define MAX_MAP_WORLDLIGHTS				65536 // According to ficool2, this limit is bogus/not enforced by the engine and can be "safely" raised.
 #else
@@ -102,12 +108,17 @@
 #define MAX_MAP_CUBEMAPSAMPLES			1024
 #ifdef MAPBASE
 #define MAX_MAP_OVERLAYS				8192 // According to ficool2, this limit is bogus/not enforced by the engine and can be "safely" raised.
+											 // Kyloa Confirm Todo : can it be raised even more ?
+
 #else
 #define MAX_MAP_OVERLAYS				512 
 #endif
 #define MAX_MAP_WATEROVERLAYS			16384
 #define MAX_MAP_TEXDATA_STRING_DATA		256000
 #define MAX_MAP_TEXDATA_STRING_TABLE	65536
+
+#define MAX_MAP_DETAILPROPS				524279 //Kyloa : wouterpleizier commit
+
 // this is stuff for trilist/tristrips, etc.
 #define MAX_MAP_PRIMITIVES				32768
 #define MAX_MAP_PRIMVERTS				65536

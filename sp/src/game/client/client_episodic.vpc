@@ -4,6 +4,10 @@
 //	Project Script
 //-----------------------------------------------------------------------------
 
+//-------------------------
+//- Also used for Kyloa ! -
+//-------------------------
+
 $Macro SRCDIR		"..\.."
 $Macro GAMENAME 	"episodic" [!$SOURCESDK]
 $Macro GAMENAME 	"mod_episodic" [$SOURCESDK]
@@ -14,18 +18,76 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	".\hl2;.\hl2\elements;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;..\..\public;$BASE"
-		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;HL2_EPISODIC"
+		$AdditionalIncludeDirectories	".\fmod;.\kyloa;.\hl2;.\hl2\elements;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;..\..\public;$BASE;$SRCDIR\fmod\api\inc;"
+		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;HL2_EPISODIC;KYLOA_FMOD"
+	}
+	
+	$Linker
+	{
+		$AdditionalLibraryDirectories	"$BASE; $SRCDIR\fmod\api\lib"
 	}
 }
 
-$Project "Client (Episodic)"
+$Project "Client (Kyloa)"
 {
+
+	$Folder	"Link Libraries"
+	{
+		$Lib	"$SRCDIR\fmod\api\lib\fmodex_vc"
+	}
+
 	$Folder	"Source Files"
 	{
 		$File	"hud_chat.cpp"
 		$File	"c_team_objectiveresource.cpp"
 		$File	"c_team_objectiveresource.h"
+
+		//------------
+		//Kyloa
+		//------------
+		
+		$Folder "FMOD"
+		{
+			$File	"fmod\fmod_manager.h"
+			$File	"fmod\fmod_manager.cpp"
+		}
+	
+		$Folder "Kyloa"
+		{
+			$Folder "Weapons"
+			{
+				//Staple Gun
+				$File	"kyloa\c_weapon_staplegun.cpp"
+				$File	"kyloa\c_weapon_staplegun.h"
+			}
+
+			$Folder "NPCs"
+			{
+			}
+
+			$Folder "Items"
+			{
+			}
+			
+			$Folder "HUD"
+			{
+				//Staple Gun HUD
+				$File	"kyloa\hud_staplegun_energy.cpp"
+			}
+
+			//===
+			//Shared stuff
+			//===
+
+			//Base Kyloa Combat weapon
+			//$File	"$SRCDIR\game\shared\kyloa\basekyloacombatweapon_shared.h"
+			//$File	"$SRCDIR\game\shared\kyloa\basekyloacombatweapon_shared.cpp"
+
+		}
+
+		//------------
+		//End Kyloa
+		//------------
 
 		$Folder	"HL2 DLL"
 		{

@@ -1604,6 +1604,24 @@ ChunkFileResult_t CMapFile::LoadEntityCallback(CChunkFile *pFile, int nParam)
 			return(ChunkFile_Ok);
 		}
 
+		//------------------------
+		// Kyloa : taken from YBSP
+		//------------------------
+
+		// info_null entities get renamed to _null to prevent vanilla game
+		// code from treating them as edicts for one tick upon map spawn
+		// This causes an error in the console, but that can be ignored
+		// just like with info_ladder
+
+		if (g_NullRenaming)
+		{
+			if (!strcmp("info_null", pClassName))
+			{
+				SetKeyValue(mapent, "classname", "_null");
+			}
+		}
+
+
 		// these get added to a list for processing the portal file
 		// but aren't necessary to emit to the BSP
 		if ( !strcmp( "func_viscluster", pClassName ) )
@@ -1612,10 +1630,26 @@ ChunkFileResult_t CMapFile::LoadEntityCallback(CChunkFile *pFile, int nParam)
 			return(ChunkFile_Ok);
 		}
 
-		//
-		// func_ladder brushes are moved into the world entity.  We convert the func_ladder to an info_ladder
-		// that holds the ladder's mins and maxs, and leave the entity.  This helps the bots figure out ladders.
-		//
+		//-----------------------------------
+		//Kyloa : func_detail_blocker support
+		//-----------------------------------
+
+		// func_detail_blocker is added to a list that's used when placing
+		// detail props. The entity doesn't get written to the BSP.
+		if (!strcmp("func_detail_blocker", pClassName))
+		{
+			AddDetailBlocker(mapent);
+			return(ChunkFile_Ok);
+		}
+
+		//---------
+		//Kyloa end
+		//---------
+
+
+		// func_ladder brushes are moved into the world entity.  We convert the func_ladder to an info_ladder that
+		// holds the ladder's mins and maxs, and leave the entity.  This helps third-party bots figure out ladders.
+
 		if ( !strcmp( "func_ladder", pClassName ) )
 		{
 			AddLadderKeys( mapent );
@@ -1732,11 +1766,13 @@ ChunkFileResult_t CMapFile::LoadEntityCallback(CChunkFile *pFile, int nParam)
 		}
 #endif
 
-		if ( !strcmp( "test_sidelist", pClassName ) )
-		{
-			ConvertSideList(mapent, "sides");
-			return ChunkFile_Ok;
-		}
+		//Kyloa : removed because useless
+
+		//if ( !strcmp( "test_sidelist", pClassName ) )
+		//{
+		//	ConvertSideList(mapent, "sides");
+		//	return ChunkFile_Ok;
+		//}
 
 		if ( !strcmp( "info_overlay", pClassName ) )
 		{

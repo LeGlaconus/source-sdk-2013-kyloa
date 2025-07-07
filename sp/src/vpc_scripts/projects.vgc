@@ -15,7 +15,8 @@ $Project "captioncompiler"
 
 $Project "client"
 {
-	"game\client\client_hl2.vpc"		[($WIN32||$X360||$POSIX) && $HL2]
+//Kyloa : not including hl2
+//	"game\client\client_hl2.vpc"		[($WIN32||$X360||$POSIX) && $HL2]
 	"game\client\client_episodic.vpc"	[($WIN32||$X360||$POSIX) && $EPISODIC]
 }
 
@@ -42,7 +43,8 @@ $Project "height2normal"
 
 $Project "server"
 {
-	"game\server\server_hl2.vpc"		[($WIN32||$X360||$POSIX) && $HL2]
+//Kyloa : not including hl2
+//	"game\server\server_hl2.vpc"		[($WIN32||$X360||$POSIX) && $HL2]
 	"game\server\server_episodic.vpc"	[($WIN32||$X360||$POSIX) && $EPISODIC]
 }
 
@@ -141,3 +143,13 @@ $Project "vvis_launcher"
 	"utils\vvis_launcher\vvis_launcher.vpc" [$WIN32]
 }
 
+
+
+//===============
+//VAudio-MiniMP3
+//===============
+
+$Project "vaudio-minimp3"
+{
+	"vpc_scripts\vaudio_minimp3.vpc"
+}

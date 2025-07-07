@@ -15,6 +15,78 @@
 #include "materialpatch.h"
 #include "KeyValues.h"
 
+//Kyloa : for CONTENTS_* and SURF_* shenanigans
+
+struct FlagTable_t
+{
+	int	uiContent;
+	const char* szContent;
+};
+
+//csg already has that but it's different here
+#define SPLIT_INT_AND_STRING(flag) \
+{flag, #flag}
+
+static const FlagTable_t contentsTable[] =
+{
+//SPLIT_INT_AND_STRING(CONTENTS_EMPTY),
+SPLIT_INT_AND_STRING(CONTENTS_SOLID),
+SPLIT_INT_AND_STRING(CONTENTS_WINDOW),
+SPLIT_INT_AND_STRING(CONTENTS_AUX), //Kyloa Confirm : what does that do ? Possibly used at runtime
+SPLIT_INT_AND_STRING(CONTENTS_GRATE),
+SPLIT_INT_AND_STRING(CONTENTS_SLIME),
+SPLIT_INT_AND_STRING(CONTENTS_WATER),
+SPLIT_INT_AND_STRING(CONTENTS_BLOCKLOS),
+SPLIT_INT_AND_STRING(CONTENTS_OPAQUE),
+SPLIT_INT_AND_STRING(CONTENTS_TESTFOGVOLUME),
+SPLIT_INT_AND_STRING(CONTENTS_UNUSED),
+SPLIT_INT_AND_STRING(CONTENTS_UNUSED6),
+SPLIT_INT_AND_STRING(CONTENTS_TEAM1),
+SPLIT_INT_AND_STRING(CONTENTS_TEAM2),
+SPLIT_INT_AND_STRING(CONTENTS_IGNORE_NODRAW_OPAQUE),
+SPLIT_INT_AND_STRING(CONTENTS_MOVEABLE),
+SPLIT_INT_AND_STRING(CONTENTS_AREAPORTAL),
+SPLIT_INT_AND_STRING(CONTENTS_PLAYERCLIP),
+SPLIT_INT_AND_STRING(CONTENTS_MONSTERCLIP),
+SPLIT_INT_AND_STRING(CONTENTS_CURRENT_0),
+SPLIT_INT_AND_STRING(CONTENTS_CURRENT_90),
+SPLIT_INT_AND_STRING(CONTENTS_CURRENT_180),
+SPLIT_INT_AND_STRING(CONTENTS_CURRENT_270),
+SPLIT_INT_AND_STRING(CONTENTS_CURRENT_UP),
+SPLIT_INT_AND_STRING(CONTENTS_CURRENT_DOWN),
+SPLIT_INT_AND_STRING(CONTENTS_ORIGIN),
+SPLIT_INT_AND_STRING(CONTENTS_MONSTER),
+SPLIT_INT_AND_STRING(CONTENTS_DEBRIS),
+SPLIT_INT_AND_STRING(CONTENTS_DETAIL),
+SPLIT_INT_AND_STRING(CONTENTS_TRANSLUCENT),
+SPLIT_INT_AND_STRING(CONTENTS_LADDER),
+SPLIT_INT_AND_STRING(CONTENTS_HITBOX),
+
+//Kyloa : last bit is unused
+SPLIT_INT_AND_STRING(CONTENTS_LASTBIT),
+};
+
+static const FlagTable_t flagsTable[] =
+{
+SPLIT_INT_AND_STRING(SURF_LIGHT),
+SPLIT_INT_AND_STRING(SURF_SKY2D),
+SPLIT_INT_AND_STRING(SURF_SKY),
+SPLIT_INT_AND_STRING(SURF_WARP), //Kyloa Confirm : what does that do ? based on previous research that had to do with water in vvis
+SPLIT_INT_AND_STRING(SURF_TRANS),
+SPLIT_INT_AND_STRING(SURF_NOPORTAL),
+SPLIT_INT_AND_STRING(SURF_TRIGGER),
+SPLIT_INT_AND_STRING(SURF_NODRAW),
+SPLIT_INT_AND_STRING(SURF_HINT),
+SPLIT_INT_AND_STRING(SURF_SKIP),
+SPLIT_INT_AND_STRING(SURF_NOLIGHT),
+SPLIT_INT_AND_STRING(SURF_BUMPLIGHT),
+SPLIT_INT_AND_STRING(SURF_NOSHADOWS),
+SPLIT_INT_AND_STRING(SURF_NODECALS),
+SPLIT_INT_AND_STRING(SURF_NOCHOP),
+SPLIT_INT_AND_STRING(SURF_HITBOX),
+};
+
+
 void LoadSurfaceProperties( void );
 
 IPhysicsSurfaceProps *physprops = NULL;
@@ -37,14 +109,22 @@ dtexdata_t *GetTexData( int index )
 static qboolean StringIsTrue( const char *str )
 {
 	if( Q_strcasecmp( str, "true" ) == 0 )
-	{
 		return true;
-	}
-	if( Q_strcasecmp( str, "1" ) == 0 )
-	{
+	else if( Q_strcasecmp( str, "1" ) == 0 )
 		return true;
-	}
-	return false;
+	else
+		return false;
+}
+
+//Kyloa custom
+static qboolean StringIsFalse(const char* str)
+{
+	if (Q_strcasecmp(str, "false") == 0)
+		return true;
+	else if (Q_strcasecmp(str, "0") == 0)
+		return true;
+	else
+		return false;
 }
 
 int	FindMiptex (const char *name)
@@ -165,19 +245,19 @@ int	FindMiptex (const char *name)
 		// HANDLE ALL OF THE STUFF THAT IS RENDERED WITH THE MATERIAL THAT IS ON IT.
 
 		// Handle ladders.
-		if ( ( propVal = GetMaterialVar( matID, "%compileLadder" ) ) &&	StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compileLadder")) && StringIsTrue(propVal))
 		{
 			textureref[i].contents |= CONTENTS_LADDER;
 		}
 
 		// handle wet materials
-		if ( ( propVal = GetMaterialVar( matID, "%noPortal" ) ) &&
-			StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%noPortal")) &&
+			StringIsTrue(propVal))
 		{
 			textureref[i].flags |= SURF_NOPORTAL;
 		}
 
-		if ( ( propVal = GetMaterialVar( matID, "%compilePassBullets" ) ) && StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compilePassBullets")) && StringIsTrue(propVal))
 		{
 			// change contents to grate, so bullets pass through
 			// NOTE: This has effects on visibility too!
@@ -185,29 +265,29 @@ int	FindMiptex (const char *name)
 			textureref[i].contents |= CONTENTS_GRATE;
 		}
 
-		if( g_BumpAll || GetMaterialShaderPropertyBool( matID, UTILMATLIB_NEEDS_BUMPED_LIGHTMAPS ) )
+		if (g_BumpAll || GetMaterialShaderPropertyBool(matID, UTILMATLIB_NEEDS_BUMPED_LIGHTMAPS))
 		{
 			textureref[i].flags |= SURF_BUMPLIGHT;
 		}
-		
-		if( GetMaterialShaderPropertyBool( matID, UTILMATLIB_NEEDS_LIGHTMAP ) )
+
+		if (GetMaterialShaderPropertyBool(matID, UTILMATLIB_NEEDS_LIGHTMAP))
 		{
 			textureref[i].flags &= ~SURF_NOLIGHT;
 		}
-		else if( !g_bLightIfMissing )
+		else if (!g_bLightIfMissing)
 		{
 			textureref[i].flags |= SURF_NOLIGHT;
 		}
 		// handle nodraw faces/brushes
-		if ( ( propVal = GetMaterialVar( matID, "%compileNoDraw" ) ) && StringIsTrue( propVal ) )
-		{								    
+		if ((propVal = GetMaterialVar(matID, "%compileNoDraw")) && StringIsTrue(propVal))
+		{
 			//		textureref[i].contents |= CONTENTS_DETAIL;
 			textureref[i].flags |= SURF_NODRAW | SURF_NOLIGHT;
 		}
 
 		// Just a combination of nodraw + pass bullets, makes things easier
-		if ( ( propVal = GetMaterialVar( matID, "%compileInvisible" ) ) && StringIsTrue( propVal ) )
-		{								    
+		if ((propVal = GetMaterialVar(matID, "%compileInvisible")) && StringIsTrue(propVal))
+		{
 			// change contents to grate, so bullets pass through
 			// NOTE: This has effects on visibility too!
 			textureref[i].contents &= ~CONTENTS_SOLID;
@@ -217,14 +297,14 @@ int	FindMiptex (const char *name)
 
 		bool checkWindow = true;
 		// handle non solid
-		if ( ( propVal = GetMaterialVar( matID, "%compileNonsolid" ) ) && StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compileNonsolid")) && StringIsTrue(propVal))
 		{
 			textureref[i].contents = CONTENTS_OPAQUE;
 			// Non-Solid can't be a window either!
 			checkWindow = false;
 		}
 		// handle block LOS
-		if ( ( propVal = GetMaterialVar( matID, "%compileBlockLOS" ) ) && StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compileBlockLOS")) && StringIsTrue(propVal))
 		{
 			textureref[i].contents = CONTENTS_BLOCKLOS;
 
@@ -232,24 +312,24 @@ int	FindMiptex (const char *name)
 			checkWindow = false;
 		}
 
-		if ( ( propVal = GetMaterialVar( matID, "%compileDetail" ) ) &&
-			StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compileDetail")) &&
+			StringIsTrue(propVal))
 		{
 			textureref[i].contents |= CONTENTS_DETAIL;
 		}
 
-		bool bKeepLighting = ( ( propVal = GetMaterialVar( matID, "%compileKeepLight" ) ) &&
-			StringIsTrue( propVal ) );
+		bool bKeepLighting = ((propVal = GetMaterialVar(matID, "%compileKeepLight")) &&
+			StringIsTrue(propVal));
 
 		// handle materials that want to be treated as water.
-		if ( ( propVal = GetMaterialVar( matID, "%compileWater" ) ) &&
-			StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compileWater")) &&
+			StringIsTrue(propVal))
 		{
-			textureref[i].contents &= ~(CONTENTS_SOLID|CONTENTS_DETAIL);
+			textureref[i].contents &= ~(CONTENTS_SOLID | CONTENTS_DETAIL);
 			textureref[i].contents |= CONTENTS_WATER;
 			textureref[i].flags |= SURF_WARP | SURF_NOSHADOWS | SURF_NODECALS;
 
-			if ( g_DisableWaterLighting && !bKeepLighting )
+			if (g_DisableWaterLighting && !bKeepLighting)
 			{
 				textureref[i].flags |= SURF_NOLIGHT;
 			}
@@ -257,47 +337,81 @@ int	FindMiptex (const char *name)
 			// Set this so that we can check at the end of the process the presence of a a WaterLODControl entity.
 			g_bHasWater = true;
 		}
-		const char *pShaderName = GetMaterialShaderName(matID);
-		if ( !bKeepLighting && !Q_strncasecmp( pShaderName, "water", 5 ) || !Q_strncasecmp( pShaderName, "UnlitGeneric", 12 ) )
+		const char* pShaderName = GetMaterialShaderName(matID);
+		if (!bKeepLighting && !Q_strncasecmp(pShaderName, "water", 5) || !Q_strncasecmp(pShaderName, "UnlitGeneric", 12))
 		{
 			//if ( !(textureref[i].flags & SURF_NOLIGHT) )
 			//	Warning("Forcing lit materal %s to nolight\n", name );
 			textureref[i].flags |= SURF_NOLIGHT;
 		}
 
-		if ( ( propVal = GetMaterialVar( matID, "%compileSlime" ) ) &&
-			StringIsTrue( propVal ) )
+		if ((propVal = GetMaterialVar(matID, "%compileSlime")) &&
+			StringIsTrue(propVal))
 		{
-			textureref[i].contents &= ~(CONTENTS_SOLID|CONTENTS_DETAIL);
+			textureref[i].contents &= ~(CONTENTS_SOLID | CONTENTS_DETAIL);
 			textureref[i].contents |= CONTENTS_SLIME;
 			textureref[i].flags |= SURF_NODECALS;
 			// Set this so that we can check at the end of the process the presence of a a WaterLODControl entity.
 			g_bHasWater = true;
 		}
-	
-		opacity = GetMaterialShaderPropertyInt( matID, UTILMATLIB_OPACITY );
-		
-		if ( checkWindow && opacity != UTILMATLIB_OPAQUE )
+
+		opacity = GetMaterialShaderPropertyInt(matID, UTILMATLIB_OPACITY);
+
+		if (checkWindow && opacity != UTILMATLIB_OPAQUE)
 		{
 			// transparent *and solid* brushes that aren't grates or water must be windows
-			if ( !(textureref[i].contents & (CONTENTS_GRATE|CONTENTS_WATER)) )
+			if (!(textureref[i].contents & (CONTENTS_GRATE | CONTENTS_WATER)))
 			{
 				textureref[i].contents |= CONTENTS_WINDOW;
 			}
 
 			textureref[i].contents &= ~CONTENTS_SOLID;
-			
+
 			// this affects engine primitive sorting, SURF_TRANS means sort as a translucent primitive
-			if ( opacity == UTILMATLIB_TRANSLUCENT )
+			if (opacity == UTILMATLIB_TRANSLUCENT)
 			{
 				textureref[i].flags |= SURF_TRANS;
 			}
-			
+
 		}
-		if ( textureref[i].flags & SURF_NOLIGHT )
+		if (textureref[i].flags & SURF_NOLIGHT)
 		{
 			textureref[i].flags &= ~SURF_BUMPLIGHT;
 		}
+
+
+		//-----------------------
+		//Kyloa : Taken from YBSP, rewrote
+		//-----------------------
+
+		for (int a = 0; a < 32; a++)
+		{
+			if (propVal != nullptr)
+				Msg("propVal = %s \n", propVal);
+			if (propVal = GetMaterialVar(matID, contentsTable[a].szContent))
+			{
+				if (StringIsTrue(propVal))
+					textureref[i].contents |= contentsTable[a].uiContent;
+				else if (StringIsFalse(propVal))
+					textureref[i].contents &= ~contentsTable[a].uiContent;
+			}
+		}
+
+		for (int a = 0; a < 16; a++)
+		{
+			if (propVal = GetMaterialVar(matID, flagsTable[a].szContent))
+			{
+				if (StringIsTrue(propVal))
+					textureref[i].flags |= flagsTable[a].uiContent;
+				else if (StringIsFalse(propVal))
+					textureref[i].flags &= ~flagsTable[a].uiContent;
+			}
+		}
+
+		//---------------
+		// Kyloa End YBSP
+		//---------------
+
 	}
 
 	nummiptex++;

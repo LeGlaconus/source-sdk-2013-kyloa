@@ -747,12 +747,12 @@ CON_COMMAND_F( buddha, "Toggle.  Player takes damage but won't die. (Shows red c
 		if (pPlayer->m_debugOverlays & OVERLAY_BUDDHA_MODE)
 		{
 			pPlayer->m_debugOverlays &= ~OVERLAY_BUDDHA_MODE;
-			Msg("Buddha Mode off...\n");
+			Msg("Buddha Mode off\n");
 		}
 		else
 		{
 			pPlayer->m_debugOverlays |= OVERLAY_BUDDHA_MODE;
-			Msg("Buddha Mode on...\n");
+			Msg("Buddha Mode on\n");
 		}
 	}
 }
@@ -801,7 +801,7 @@ CON_COMMAND( say_team, "Display player message to team" )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-CON_COMMAND( give, "Give item to player.\n\tArguments: <item_name>" )
+CON_COMMAND_F( give, "Give item to player.\n\tArguments: <item_name>", FCVAR_NONE)
 {
 	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
 	if ( pPlayer 

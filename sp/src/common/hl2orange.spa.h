@@ -180,6 +180,9 @@ extern "C" {
 // XUserWriteAchievements and XUserCreateAchievementEnumerator.
 //
 
+//Kyloa
+#if 0
+
 #define ACHIEVEMENT_HLX_KILL_ENEMIES_WITHPHYSICS    43
 #define ACHIEVEMENT_HLX_KILL_ENEMY_WITHHOPPERMINE   44
 #define ACHIEVEMENT_HLX_KILL_ENEMIES_WITHMANHACK    45
@@ -286,6 +289,8 @@ extern "C" {
 #endif // _XBOX
 
 #define ACHIEVEMENT_TF_LAST_ORANGEBOX				150
+
+#endif //if 0
 
 //
 // Stats view ids

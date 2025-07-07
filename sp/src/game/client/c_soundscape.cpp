@@ -16,6 +16,10 @@
 #include "engine/ivdebugoverlay.h"
 #include "tier0/icommandline.h"
 
+#ifdef KYLOA_FMOD
+#include "fmod_manager.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -37,6 +41,12 @@ struct loopingsound_t
 	int			pitch;			// pitch shift
 	int			id;				// Used to fade out sounds that don't belong to the most current setting
 	bool		isAmbient;		// Ambient sounds have no spatialization - they play from everywhere
+
+	#ifdef KYLOA_FMOD
+	//Kyloa FMOD TODO : find if this causes issues or if it should be added somewhere else
+	bool		isNotWav;
+	#endif
+
 };
 
 ConVar soundscape_fadetime( "soundscape_fadetime", "3.0", FCVAR_CHEAT, "Time to crossfade sound effects between soundscapes" );
@@ -56,6 +66,11 @@ struct randomsound_t
 	bool		isAmbient;
 	bool		isRandom;
 	KeyValues	*pWaves;
+
+	#ifdef KYLOA_FMOD
+	//Kyloa FMOD TODO : find if this causes issues or if it should be added somewhere else
+	bool		isNotWav;
+	#endif
 
 	void Init()
 	{

@@ -17,6 +17,8 @@
 #include "basegrenade_shared.h"
 #include "basehlcombatweapon.h"
 
+#if ENABLE_HL2_WEAPONS
+
 class CWeaponAR2 : public CHLMachineGun
 {
 public:
@@ -80,3 +82,5 @@ public:
 
 
 #endif	//WEAPONAR2_H
+
+#endif //ENABLE_HL2_WEAPONS

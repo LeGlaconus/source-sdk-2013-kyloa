@@ -66,6 +66,10 @@ bool		g_DisableWaterLighting = false;
 bool		g_bAllowDetailCracks = false;
 bool		g_bNoVirtualMesh = false;
 bool		g_bNoHiddenManifestMaps = false;
+
+//Kyloa : null renaming option
+bool		g_NullRenaming = false;
+
 #ifdef MAPBASE
 bool		g_bNoDefaultCubemaps = true;
 bool		g_bSkyboxCubemaps = false;
@@ -311,7 +315,7 @@ void ProcessWorldModel (void)
 		}
 		else
 		{
-			Warning( ("**** leaked ****\n") );
+			Warning( ("**** MAP LEAKED ****\n") );
 			leaked = true;
 			LeakFile (tree);
 #ifdef MAPBASE
@@ -927,9 +931,9 @@ int RunVBSP( int argc, char **argv )
 	Q_FileBase( source, mapbase, sizeof( mapbase ) );
 	strlwr( mapbase );
 
-	LoadCmdLineFromFile( argc, argv, mapbase, "vbsp" );
+	LoadCmdLineFromFile( argc, argv, mapbase, "kyloa_bsp" );
 
-	Msg( "Valve Software - vbsp.exe (%s)\n", __DATE__ );
+	Msg( "Valve Software + Le Glaconus - kyloa_bsp.exe (%s)\n", __DATE__ );
 
 	for (i=1 ; i<argc ; i++)
 	{
@@ -1172,6 +1176,14 @@ int RunVBSP( int argc, char **argv )
 		{
 			g_bNoHiddenManifestMaps = true;
 		}
+
+		//Kyloa : Added option to turn off info_null shenanigans, you never know
+		else if (!Q_stricmp(argv[i], "-nullrenaming"))
+		{
+			g_NullRenaming = true;
+		}
+
+
 #ifdef MAPBASE
 		// Thanks to Mapbase's shader changes, default all-black cubemaps are no longer needed.
 		// The command has been switched from "-nodefaultcubemap" to "-defaultcubemap",
@@ -1285,8 +1297,8 @@ int RunVBSP( int argc, char **argv )
 		PrintCommandLine( argc, argv );
 
 		Warning(	
-			"usage  : vbsp [options...] mapfile\n"
-			"example: vbsp -onlyents c:\\hl2\\hl2\\maps\\test\n"
+			"usage  : kyloa_bsp [options...] mapfile\n"
+			"example: kyloa_bsp -onlyents c:\\hl2\\hl2\\maps\\test\n"
 			"\n"
 			"Common options (use -v to see all options):\n"
 			"\n"

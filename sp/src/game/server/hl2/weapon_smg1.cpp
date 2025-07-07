@@ -21,6 +21,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if ENABLE_HL2_WEAPONS
+
 extern ConVar    sk_plr_dmg_smg1_grenade;	
 #ifdef MAPBASE
 extern ConVar    sk_npc_dmg_smg1_grenade;
@@ -83,6 +85,19 @@ BEGIN_DATADESC( CWeaponSMG1 )
 	DEFINE_FIELD( m_flNextGrenadeCheck, FIELD_TIME ),
 
 END_DATADESC()
+
+#endif //ENABLE_HL2_WEAPONS
+
+#ifndef ENABLE_HL2_WEAPONS
+
+class CWeaponSMG1
+{
+	DECLARE_CLASS_NOBASE(CWeaponSMG1);
+public:
+	DECLARE_ACTTABLE();
+};
+
+#endif //ifndef ENABLE_HL2_WEAPONS
 
 acttable_t	CWeaponSMG1::m_acttable[] = 
 {
@@ -180,6 +195,8 @@ int GetSMG1ActtableCount()
 	return ARRAYSIZE(CWeaponSMG1::m_acttable);
 }
 #endif
+
+#if ENABLE_HL2_WEAPONS
 
 //=========================================================
 CWeaponSMG1::CWeaponSMG1( )
@@ -615,3 +632,5 @@ const WeaponProficiencyInfo_t *CWeaponSMG1::GetProficiencyValues()
 
 	return proficiencyTable;
 }
+
+#endif //ENABLE_HL2_WEAPONS

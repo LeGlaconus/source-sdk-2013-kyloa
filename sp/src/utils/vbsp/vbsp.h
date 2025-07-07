@@ -403,6 +403,10 @@ extern	bool		g_DisableWaterLighting;
 extern	bool		g_bAllowDetailCracks;
 extern	bool		g_bNoVirtualMesh;
 extern	bool		g_bNoHiddenManifestMaps;
+
+// Kyloa : null renaming option
+extern	bool		g_NullRenaming;
+
 #ifdef MAPBASE
 extern bool			g_bPropperInsertAllAsStatic;
 extern bool			g_bPropperStripEntities;
@@ -455,6 +459,17 @@ void	CreateBrush (int brushnum);
 //=============================================================================
 // detail objects
 //=============================================================================
+
+
+//-----------------------------------
+//Kyloa : func_detail_blocker support
+//-----------------------------------
+
+void AddDetailBlocker(entity_t* pFuncDetailBlocker);
+
+//---------
+//Kyloa end
+//---------
 
 void LoadEmitDetailObjectDictionary( char const* pGameDir );
 void EmitDetailObjects();

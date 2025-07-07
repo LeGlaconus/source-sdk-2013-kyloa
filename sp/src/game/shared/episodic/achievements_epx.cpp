@@ -10,6 +10,8 @@
 #include "achievementmgr.h"
 #include "baseachievement.h"
 
+#if 0
+
 #ifdef GAME_DLL
 
 #include "basegrenade_shared.h"
@@ -99,3 +101,5 @@ protected:
 DECLARE_ACHIEVEMENT( CAchievementEpXKillZombiesWithFlares, ACHIEVEMENT_EPX_KILL_ZOMBIES_WITHFLARES, "EPX_KILL_ZOMBIES_WITHFLARES", 5 );
 
 #endif // GAME_DLL
+
+#endif //if 0

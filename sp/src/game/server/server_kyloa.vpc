@@ -1,0 +1,27 @@
+//-----------------------------------------------------------------------------
+//	SERVER_KYLOA.VPC
+//
+//	Project Script
+//-----------------------------------------------------------------------------
+
+//Include "$SRCDIR\game\server\server_base.vpc"
+
+//$Configuration
+//{
+//	$Compiler
+//	{
+//		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;.\hl2;.\episodic;.\kyloa"
+//		$PreprocessorDefinitions		"$BASE;HL2_DLL;HL2_EPISODIC;USES_SAVERESTORE"
+//	}
+//}
+
+//$Project
+//{
+//	$Folder	"Source Files"
+//	{
+//		$Folder	"Kyloa"
+//		{
+//			$File ""
+//		}
+//	}
+//}

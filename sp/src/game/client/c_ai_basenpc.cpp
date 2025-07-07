@@ -29,7 +29,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_AI_BaseNPC, DT_AI_BaseNPC, CAI_BaseNPC )
 	RecvPropInt( RECVINFO( m_iSpeedModRadius ) ),
 	RecvPropInt( RECVINFO( m_iSpeedModSpeed ) ),
 	RecvPropInt( RECVINFO( m_bSpeedModActive ) ),
-	RecvPropBool( RECVINFO( m_bImportanRagdoll ) ),
+	RecvPropBool( RECVINFO( m_bImportantRagdoll ) ),
 	RecvPropFloat( RECVINFO( m_flTimePingEffect ) ),
 END_RECV_TABLE()
 

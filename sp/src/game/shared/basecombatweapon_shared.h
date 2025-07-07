@@ -64,6 +64,10 @@ class CUserCmd;
 // ----------------------------------------------
 #define SF_WEAPON_NO_AUTO_SWITCH_WHEN_EMPTY (1<<6) // So weapons with ammo preserved at 0 don't switch.
 #define SF_WEAPON_USED (1<<7) // Weapon is being +USE'd, not bumped
+
+//Kyloa : energy weapons
+#define SF_ENERGY_WEAPON (1<<10)
+
 #endif
 
 //Percent
@@ -151,6 +155,11 @@ enum WeaponClass_t
 #define VECTOR_CONE_10DEGREES		Vector( 0.08716, 0.08716, 0.08716 )
 #define VECTOR_CONE_15DEGREES		Vector( 0.13053, 0.13053, 0.13053 )
 #define VECTOR_CONE_20DEGREES		Vector( 0.17365, 0.17365, 0.17365 )
+
+//full : 0,1090831
+//Using the above mentioned method : 0,10886687485196457596786106163565 meh close enough
+//Kyloa (might not be accurate this is 12,5 degrees converted to radians then halved):
+#define VECTOR_CONE_12_5DEGREES		Vector( 0.10908, 0.10908, 0.10908 )
 
 //-----------------------------------------------------------------------------
 // Purpose: Base weapon class, shared on client and server

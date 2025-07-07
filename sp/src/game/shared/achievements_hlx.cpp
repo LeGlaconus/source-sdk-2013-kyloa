@@ -7,6 +7,8 @@
 
 #include "cbase.h"
 
+#if 0
+
 #ifdef GAME_DLL
 
 // this gets compiled in for HL2 + Ep(X) only
@@ -251,3 +253,5 @@ int CalcPlayerAttacks( bool bBulletOnly )
 #endif	// ( defined( HL2_DLL ) || defined( HL2_EPISODIC ) ) && ( !defined ( PORTAL ) )
 
 #endif // GAME_DLL
+
+#endif //if 0

@@ -44,6 +44,7 @@ static DynamicResupplyItems_t g_DynamicResupplyHealthItems[] =
 };
 
 // Ammo types
+#if 0
 static DynamicResupplyItems_t g_DynamicResupplyAmmoItems[] =
 {
 	{ "item_ammo_pistol",			"Pistol",		SIZE_AMMO_PISTOL,		0.5f },
@@ -52,10 +53,19 @@ static DynamicResupplyItems_t g_DynamicResupplyAmmoItems[] =
 	{ "item_ammo_ar2",				"AR2",			SIZE_AMMO_AR2,			0.0f },
 	{ "item_box_buckshot",			"Buckshot",		SIZE_AMMO_BUCKSHOT,		0.0f },
 	{ "item_rpg_round",				"RPG_Round",	SIZE_AMMO_RPG_ROUND,	0.0f },
-	{ "weapon_frag",				"Grenade",		1,						0.1f },
+	//{ "weapon_frag",				"Grenade",		1,						0.1f }, Kyloa : Ash gets annoyed by that
 	{ "item_ammo_357",				"357",			SIZE_AMMO_357,			0.0f },
 	{ "item_ammo_crossbow",			"XBowBolt",		SIZE_AMMO_CROSSBOW,		0.0f },
 	{ "item_ammo_ar2_altfire",		"AR2AltFire",	SIZE_AMMO_AR2_ALTFIRE,	0.0f },
+};
+#endif
+static DynamicResupplyItems_t g_DynamicResupplyAmmoItems[] =
+{
+	{"item_ammo_staplegun",			"Staple",		SIZE_AMMO_STAPLE,		0.0f}, //Kyloa todo : replace these
+	{"item_ammo_smg1",				"SMG1",			SIZE_AMMO_SMG1,			0.0f}, //item_ammo_mp7
+	{"item_ammo_smg1_grenade",		"SMG1_Grenade",	SIZE_AMMO_SMG1_GRENADE,	0.0f}, //item_ammo_mp7_grenade
+	{"item_box_buckshot",			"Buckshot",		SIZE_AMMO_BUCKSHOT,		0.0f}, //item_ammo_spas12
+	{"item_ammo_ar2",				"AR2",			SIZE_AMMO_AR2,			0.0f}, //item_ammo_energyar 
 };
 
 #define DS_HEALTH_INDEX		0
@@ -140,7 +150,7 @@ BEGIN_DATADESC( CItem_DynamicResupply )
 	DEFINE_INPUTFUNC( FIELD_VOID, "Kill", InputKill ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "CalculateType", InputCalculateType ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "BecomeMaster", InputBecomeMaster ),
-
+#if 0
 	DEFINE_KEYFIELD( m_flDesiredHealth[0], FIELD_FLOAT, "DesiredHealth" ),
 	DEFINE_KEYFIELD( m_flDesiredHealth[1], FIELD_FLOAT, "DesiredArmor" ),
 	DEFINE_KEYFIELD( m_flDesiredAmmo[0], FIELD_FLOAT, "DesiredAmmoPistol" ),
@@ -153,6 +163,15 @@ BEGIN_DATADESC( CItem_DynamicResupply )
 	DEFINE_KEYFIELD( m_flDesiredAmmo[7], FIELD_FLOAT, "DesiredAmmo357" ),
 	DEFINE_KEYFIELD( m_flDesiredAmmo[8], FIELD_FLOAT, "DesiredAmmoCrossbow" ),
 	DEFINE_KEYFIELD( m_flDesiredAmmo[9], FIELD_FLOAT, "DesiredAmmoAR2_AltFire" ),
+#endif //Kyloa
+
+	DEFINE_KEYFIELD(m_flDesiredHealth[0], FIELD_FLOAT, "DesiredHealth"),
+	DEFINE_KEYFIELD(m_flDesiredHealth[1], FIELD_FLOAT, "DesiredArmor"),
+	DEFINE_KEYFIELD(m_flDesiredAmmo[0], FIELD_FLOAT, "DesiredAmmoStapleGun"),
+	DEFINE_KEYFIELD(m_flDesiredAmmo[1], FIELD_FLOAT, "DesiredAmmoMP7"),
+	DEFINE_KEYFIELD(m_flDesiredAmmo[2], FIELD_FLOAT, "DesiredAmmoMP7_Grenade"),
+	DEFINE_KEYFIELD(m_flDesiredAmmo[3], FIELD_FLOAT, "DesiredAmmoEnergyAr"),
+	DEFINE_KEYFIELD(m_flDesiredAmmo[4], FIELD_FLOAT, "DesiredAmmoSpas12"),
 
 	DEFINE_FIELD( m_version, FIELD_INTEGER ),
 	DEFINE_FIELD( m_bIsMaster, FIELD_BOOLEAN ),
@@ -177,6 +196,7 @@ CItem_DynamicResupply::CItem_DynamicResupply( void )
 	m_version = VERSION_CURRENT;
 
 	// Setup default values
+#if 0
 	m_flDesiredHealth[0] = 1.0;	// Health
 	m_flDesiredHealth[1] = 0.3;	// Armor
 	m_flDesiredAmmo[0] = 0.5;	// Pistol
@@ -189,6 +209,15 @@ CItem_DynamicResupply::CItem_DynamicResupply( void )
 	m_flDesiredAmmo[7] = 0;		// 357
 	m_flDesiredAmmo[8] = 0;		// Crossbow
 	m_flDesiredAmmo[9] = 0;		// AR2 alt-fire
+#endif
+	m_flDesiredHealth[0] = 1.0;	// Health
+	m_flDesiredHealth[1] = 0.3;	// Armor
+	m_flDesiredAmmo[0] = 0.5;	// Staple Gun
+	m_flDesiredAmmo[1] = 0.5;	// MP7
+	m_flDesiredAmmo[2] = 0.1;	// MP7 Grenade
+	m_flDesiredAmmo[3] = 0.4;	// Energy AR
+	m_flDesiredAmmo[4] = 0.5;	// SPAS12
+
 }
 
 

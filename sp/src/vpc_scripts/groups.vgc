@@ -24,6 +24,8 @@ $Group "game"
 	"vgui_controls"
 	"vscript"
 	"responserules"
+	//Kyloa Custom, included with game because I mainly use game
+	"vaudio-minimp3"
 }
 
 $Group "shaderdlls"
@@ -65,6 +67,8 @@ $Group "everything"
 	"vtfdiff"
 	"vvis_dll"
 	"vvis_launcher"
+	//Kyloa Custom
+	"vaudio-minimp3"
 }
 
 $Group "dedicated"

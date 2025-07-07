@@ -31,6 +31,7 @@ struct NearbyDismount_t
 //-----------------------------------------------------------------------------
 class CHL2GameMovement : public CGameMovement
 {
+	//Kyloa : ??? Is DECLARE_CLASS for losers ????
 	typedef CGameMovement BaseClass;
 public:
 
