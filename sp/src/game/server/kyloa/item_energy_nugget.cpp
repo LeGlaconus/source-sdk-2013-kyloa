@@ -5,6 +5,10 @@
 
 #include "item_energy_nugget.h"
 
+//Cvar because it changes with the skill level
+ConVar sk_energy_nugget_health("sk_energy_nugget_health", "0", FCVAR_NONE);
+ConVar g_debug_energynugget("g_debug_energynugget", "0", FCVAR_CHEAT | FCVAR_ARCHIVE);
+
 BEGIN_DATADESC(CItemEnergyNugget)
 END_DATADESC();
 

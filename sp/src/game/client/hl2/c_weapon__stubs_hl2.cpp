@@ -47,16 +47,3 @@ STUB_WEAPON_CLASS( weapon_crowbar, WeaponCrowbar, C_BaseHLBludgeonWeapon );
 STUB_WEAPON_CLASS( weapon_oldmanharpoon, WeaponOldManHarpoon, C_WeaponCitizenPackage );
 #endif
 #endif
-
-//Kyloa
-
-//You're apparently not supposed to have one if you're making your own clientside version of it
-// I don't need to transfer the energy from the weapon directly anymore so I'm uncommenting that
-STUB_WEAPON_CLASS(weapon_staplegun, WeaponStapleGun, C_BaseHLCombatWeapon );
-STUB_WEAPON_CLASS(weapon_pipe, WeaponPipe, C_BaseHLBludgeonWeapon);
-STUB_WEAPON_CLASS(weapon_mp7, WeaponMP7, C_HLSelectFireMachineGun);
-STUB_WEAPON_CLASS(weapon_spas12, WeaponSpas12, C_BaseHLCombatWeapon);
-STUB_WEAPON_CLASS(weapon_energyar, WeaponEnergyAr, C_HLMachineGun);
-STUB_WEAPON_CLASS(weapon_uspmatch, WeaponUSPMatch, C_BaseHLCombatWeapon );
-STUB_WEAPON_CLASS(weapon_glock, WeaponGlock, C_BaseHLCombatWeapon );
-STUB_WEAPON_CLASS(weapon_22, Weapon22, C_BaseHLCombatWeapon );

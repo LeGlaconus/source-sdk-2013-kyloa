@@ -743,6 +743,66 @@ public:
 };
 LINK_ENTITY_TO_CLASS(item_ammo_staplegun_large, CItem_StapleLarge);
 
+class CItem_22 : public CItem
+{
+	DECLARE_CLASS(CItem_22, CItem);
+
+	void Spawn()
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+
+		BaseClass::Spawn();
+	}
+	void Precache()
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_22, "22"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_22, CItem_22);
+
+class CItem_22Large : public CItem
+{
+	DECLARE_CLASS(CItem_22Large, CItem);
+
+	void Spawn()
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+
+		BaseClass::Spawn();
+	}
+	void Precache()
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_22_LARGE, "22"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_22_large, CItem_22Large);
+
 // ==================================================================
 // Ammo crate which will supply infinite ammo of the specified type
 // ==================================================================

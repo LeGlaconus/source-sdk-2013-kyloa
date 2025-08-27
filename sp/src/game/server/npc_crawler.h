@@ -29,16 +29,10 @@ public:
 	//that would also involve creating a new global
 	virtual void	PlayerHasIlluminatedNPC(CBasePlayer* pPlayer, float flDot) { BaseClass::PlayerHasIlluminatedNPC(pPlayer, flDot); }
 
-	//Kyloa TODO : Use SelectModel() instead
-	//so that it doesn't crash when npc_create-ing it
-	//this is hella bad
-	inline string_t GetModelName() const
+	virtual void SelectModel()
 	{
-		if (BaseClass::GetModelName() == NULL_STRING)
-			//return AllocPooledString("models/crawler/crawler.mdl");
-			return AllocPooledString("models/breen.mdl");
-		else
-			return BaseClass::GetModelName();
+		if (GetModelName() == NULL_STRING)
+			SetModelName(AllocPooledString("models/breen.mdl"));
 	}
 
 	Class_T Classify();

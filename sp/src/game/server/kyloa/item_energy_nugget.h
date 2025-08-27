@@ -3,13 +3,11 @@
 #include "cbase.h"
 #include "items.h"
 #include "Sprite.h"
+#include "energyaccessor.h"
 
-//Cvar because it changes with the skill level
-ConVar sk_energy_nugget_health("sk_energy_nugget_health", "0", FCVAR_NONE);
 
 #define ITEM_ENERGY_NUGGET_SPRITE "sprites/energy_nugget01.vmt"
 
-ConVar g_debug_energynugget("g_debug_energynugget", "0", FCVAR_CHEAT | FCVAR_ARCHIVE);
 
 class CItemEnergyNugget : public CItem, public IBaseEnergyAccessor
 {

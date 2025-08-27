@@ -2206,7 +2206,9 @@ void CGameMovement::FullObserverMove( void )
 
 	if ( mv->m_nButtons & IN_SPEED )
 	{
-		factor /= 2.0f;
+		//factor /= 2.0f;
+		//Kyloa : the player will be sped up like in gmod
+		factor *= 2.0f;
 	}
 
 	float fmove = mv->m_flForwardMove * factor;

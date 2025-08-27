@@ -30,6 +30,11 @@ extern ConVar sk_npc_dmg_staplegun_melee;
 extern ConVar sk_staplegun_meleerange;
 extern ConVar sk_max_staplegun_energy;
 
+#define STAPLEGUN_ACCURACY_PENALTY 0.1f
+#define STAPLEGUN_ACCURACY_PENALTY_MIN -0.5f
+#define STAPLEGUN_ACCURACY_PENALTY_MAX 1.0f
+#define STAPLEGUN_ACCURACY_PENALTY_DECREASE_DELAY 0.4f
+
 #ifdef MAPBASE
 extern acttable_t* GetPistolActtable();
 extern int GetPistolActtableCount();
@@ -46,6 +51,7 @@ public:
 
 	void	PrimaryAttack();
 	void	SecondaryAttack();
+	void	ItemPostFrame();
 	void	Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator);
 
 	float	WeaponAutoAimScale() { return 0.6f; }
@@ -78,7 +84,7 @@ public:
 
 	const Vector& GetBulletSpread()
 	{
-		static Vector cone = VECTOR_CONE_15DEGREES;
+		static Vector cone = VECTOR_CONE_6DEGREES;
 
 		//Scarlet is strugling so here it goes :
 		if (!GetOwner() || !GetOwner()->IsNPC())
@@ -98,6 +104,8 @@ public:
 private:
 	int		m_iEnergyCounter;
 
+	float	m_flAccuracyPenalty = 0.0f;
+	float	m_flLastAttackTime = 0.0f;
 
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();

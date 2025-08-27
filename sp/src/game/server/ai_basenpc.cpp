@@ -7820,13 +7820,16 @@ void CAI_BaseNPC::NPCInit ( void )
 
 	SetEnemy( NULL );
 
-	m_flDistTooFar		= 1024.0;
-	SetDistLook( 2048.0 );
-
 	if ( HasSpawnFlags( SF_NPC_LONG_RANGE ) )
 	{
 		m_flDistTooFar	= 1e9f;
-		SetDistLook( 6000.0 );
+		SetDistLook( 6000.0f );
+	}
+	//Kyloa : else instead of rewriting memory
+	else
+	{
+		m_flDistTooFar		= 1024.0f;
+		SetDistLook( 2048.0f );
 	}
 
 	// Clear conditions

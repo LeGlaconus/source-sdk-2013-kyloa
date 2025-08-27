@@ -41,6 +41,10 @@
 #define SIZE_AMMO_STAPLE_MEDIUM		12 
 #define SIZE_AMMO_STAPLE_LARGE		16 //Kyloa TODO : revisit these values
 
+//Kyloa
+#define SIZE_AMMO_22				6
+#define SIZE_AMMO_22_LARGE			9
+
 #define SF_ITEM_START_CONSTRAINED	0x00000001
 #ifdef MAPBASE
 // Copied from CBaseCombatWeapon's flags, including any additions we made to those.

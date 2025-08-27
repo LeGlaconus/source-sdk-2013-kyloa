@@ -22,9 +22,7 @@ void CNPCCrawler::Precache()
 	PrecacheScriptSound("NPC_Crawler.Death");
 	PrecacheScriptSound("NPC_Crawler.DeathFinality");
 
-	//Might want to use SelectModel() instead of my crappy workaround
-
-	//Should be "models/crawler/crawler.mdl" but you never know
+	SelectModel();
 	PrecacheModel(STRING(GetModelName()));
 }
 
@@ -112,10 +110,10 @@ void CNPCCrawler::Event_Killed(const CTakeDamageInfo& info)
 
 	for (int i = 0; i <= RandomInt(1, 2); i++)
 	{
-		Vector tmp()
-		
-
-		CItemEnergyNugget* pNugget = (CItemEnergyNugget*)Create("item_energy_nugget", GetAbsOrigin(), QAngle(0, 0, 0), this);
+		//Vector tmp()
+		//
+		//
+		//CItemEnergyNugget* pNugget = (CItemEnergyNugget*)Create("item_energy_nugget", GetAbsOrigin(), QAngle(0, 0, 0), this);
 	}
 	
 

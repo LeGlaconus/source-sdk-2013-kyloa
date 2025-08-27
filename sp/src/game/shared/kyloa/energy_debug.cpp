@@ -29,11 +29,11 @@ ConCommand energy_refillenergyar("energy_refillenergyar", RefillEnergyEnergyAr_f
 
 CON_COMMAND_F(colonthree, ":3", FCVAR_CHEAT)
 {
-	unsigned int num = 10;
+	uint num = 10u;
 	if (args.ArgC() >= 1)
-		num = Q_atoi(args.Arg(1));
-	for (int i = 0; i <= 10; ++i)
+		num = atoi(args.Arg(1));
+	for (int i = 0; i <= num; ++i)
 	{
-		DevMsg(":3\n");
+		Msg(":3\n");
 	}
 }

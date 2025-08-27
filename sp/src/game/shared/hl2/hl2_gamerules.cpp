@@ -418,6 +418,14 @@ ConVar sk_max_glock("sk_max_glock", "0", FCVAR_REPLICATED);
 //ConVar sk_max_staplegun_energy("sk_max_staplegun_energy", "0", FCVAR_REPLICATED);
 
 
+//Kyloa : 22 ammo
+ConVar sk_plr_dmg_22("sk_plr_dmg_22", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_22("sk_npc_dmg_22", "0", FCVAR_REPLICATED);
+ConVar sk_max_22("sk_max_22", "0", FCVAR_REPLICATED);
+
+ConVar sk_plr_dmg_22_hammer("sk_plr_dmg_22_hammer", "0", FCVAR_REPLICATED);
+ConVar sk_npc_dmg_22_hammer("sk_npc_dmg_22_hammer", "0", FCVAR_REPLICATED);
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Input  : iDmgType - 
@@ -2173,6 +2181,11 @@ CAmmoDef *GetAmmoDef()
 		//def.AddAmmoType("StapleEnergy",		DMG_GENERIC,				TRACER_NONE,			0,	0,	"sk_max_staplegun_energy",	0, 0);
 		def.AddAmmoType("EnergyAr",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_energyar",		"sk_npc_dmg_energyar",	"sk_max_energyar",		BULLET_IMPULSE(200, 1225), 0);
 		def.AddAmmoType("Glock",			DMG_BULLET,					TRACER_LINE,			"sk_plr_dmg_glock",			"sk_npc_dmg_glock",		"sk_max_glock",			BULLET_IMPULSE(200, 1225), 0);
+		def.AddAmmoType("22",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_22",			"sk_npc_dmg_22",		"sk_max_22",			BULLET_IMPULSE(800, 5000), 0);
+		//Hacky but unless I change the values each time the hammer is pulled down I can't do it
+		def.AddAmmoType("22_HammerDown",	DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_22_hammer",		"sk_npc_dmg_22_hammer",	"sk_max_22",			BULLET_IMPULSE(800, 5000), 0);
+
+		def.AddAmmoType("Flamethrower",		DMG_BURN,					TRACER_NONE,			0, 0, 100, 0, 0, 0, 0);
 
 		//=====================================================================
 		// STRIDER MINIGUN DAMAGE - Pull up a chair and I'll tell you a tale.

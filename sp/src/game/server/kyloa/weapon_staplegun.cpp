@@ -41,9 +41,9 @@ IMPLEMENT_SERVERCLASS_ST(CWeaponStapleGun, DT_WeaponStapleGun)
 END_SEND_TABLE()
 
 BEGIN_DATADESC(CWeaponStapleGun)
-
 DEFINE_FIELD(m_iEnergyCounter, FIELD_INTEGER),
-
+DEFINE_FIELD(m_flAccuracyPenalty, FIELD_FLOAT),
+DEFINE_FIELD(m_flLastAttackTime, FIELD_TIME),
 END_DATADESC()
 
 acttable_t	CWeaponStapleGun::m_acttable[] =
@@ -240,6 +240,14 @@ void CWeaponStapleGun::Operator_ForceNPCFire(CBaseCombatCharacter* pOperator, bo
 	FireNPCPrimaryAttack(pOperator, vecShootOrigin, vecShootDir);
 }
 
+void CWeaponStapleGun::ItemPostFrame()
+{
+	if ((m_flLastAttackTime <= STAPLEGUN_ACCURACY_PENALTY_DECREASE_DELAY) && (m_flAccuracyPenalty - STAPLEGUN_ACCURACY_PENALTY >= STAPLEGUN_ACCURACY_PENALTY_MIN))
+		m_flAccuracyPenalty -= STAPLEGUN_ACCURACY_PENALTY;
+
+	BaseClass::ItemPostFrame();
+}
+
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
@@ -289,6 +297,10 @@ void CWeaponStapleGun::PrimaryAttack()
 	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
 
+	m_flLastAttackTime = gpGlobals->curtime;
+	if(m_flAccuracyPenalty < STAPLEGUN_ACCURACY_PENALTY_MAX)
+		m_flAccuracyPenalty += STAPLEGUN_ACCURACY_PENALTY;
+
 	m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
 	m_flNextSecondaryAttack = gpGlobals->curtime + GetFireRate();
 
@@ -311,7 +323,7 @@ void CWeaponStapleGun::PrimaryAttack()
 	Vector vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
 
 	//pPlayer->FireBullets(1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
-	pPlayer->FireBullets(1, vecSrc, vecAiming, pPlayer->GetAttackSpread(this), MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
+	pPlayer->FireBullets(1, vecSrc, vecAiming, GetBulletSpread() * m_flAccuracyPenalty, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0);
 
 	pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5);
 

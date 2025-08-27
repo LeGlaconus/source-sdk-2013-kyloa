@@ -6550,6 +6550,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 
 		//Kyloa
 		GiveAmmo( 8, "Staple" );
+		GiveAmmo( 36, "22" );
 
 #endif		
 #if ENABLE_HL2_WEAPONS
@@ -6573,6 +6574,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_staplegun" );
 		GiveNamedItem( "weapon_mp7" );
 		GiveNamedItem( "weapon_spas12" );
+		GiveNamedItem( "weapon_22" );
 		GiveNamedItem( "weapon_energyar" );
 		engine->ClientCommand(this->edict(), "energy_refillenergyar\n");
 

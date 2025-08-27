@@ -2,17 +2,6 @@
 
 #include "weapon_22.h"
 
-CWeapon22::CWeapon22()
-{
-	m_bReloadsSingly = false;
-	m_bFiresUnderwater = false;
-
-	m_fMinRange1 = 24;
-	m_fMaxRange1 = 1000;
-	m_fMinRange2 = 24;
-	m_fMaxRange2 = 200;
-}
-
 LINK_ENTITY_TO_CLASS(weapon_22, CWeapon22);
 
 PRECACHE_WEAPON_REGISTER(weapon_22);
@@ -21,6 +10,11 @@ IMPLEMENT_SERVERCLASS_ST(CWeapon22, DT_Weapon22)
 END_SEND_TABLE();
 
 BEGIN_DATADESC(CWeapon22)
+DEFINE_FIELD(m_bHammerDown, FIELD_BOOLEAN),
+DEFINE_FIELD(m_flAccuracyPenalty, FIELD_FLOAT),
+DEFINE_FIELD(m_flSoonestPrimaryAttack, FIELD_TIME),
+
+//DEFINE_FIELD(m_iHammerAmmoType, FIELD_INTEGER), //No need to save it
 END_DATADESC()
 
 acttable_t	CWeapon22::m_acttable[] =
@@ -163,12 +157,252 @@ int Get22ActtableCount()
 	return ARRAYSIZE(CWeapon22::m_acttable);
 }
 
-void PrimaryAttack()
+CWeapon22::CWeapon22()
 {
+	m_bReloadsSingly = false;
+	m_bFiresUnderwater = false;
 
+	m_fMinRange1 = 24;
+	m_fMaxRange1 = 1000;
+	m_fMinRange2 = 24;
+	m_fMaxRange2 = 200;
+
+	m_flSoonestPrimaryAttack = gpGlobals->curtime;
+	m_iHammerAmmoType = GetAmmoDef()->Index("22_HammerDown");
 }
 
-void SecondaryAttack()
+bool CWeapon22::Holster(CBaseCombatWeapon* pSwitchingTo)
 {
+	//Don't cheat the system by constantly pressing the switch weapon key
+	if(m_flAccuracyPenalty > 0.35f)
+		m_flAccuracyPenalty = 0.35f;
 
+	return BaseClass::Holster(pSwitchingTo);
+}
+
+void CWeapon22::ItemBusyFrame()
+{
+	if (m_flAccuracyPenalty >= WEAPON_22_ACCURACY_PENALTY_MIN)
+		m_flAccuracyPenalty -= gpGlobals->absoluteframetime / 4.0f;
+
+	if (g_debug_22.GetInt() > 1)
+		DevMsg("Accuracy penalty : %f \n", m_flAccuracyPenalty);
+
+	BaseClass::ItemBusyFrame();
+}
+
+void CWeapon22::ItemPostFrame()
+{
+	if (m_flAccuracyPenalty >= WEAPON_22_ACCURACY_PENALTY_MIN)
+		m_flAccuracyPenalty -= gpGlobals->absoluteframetime / 4.0f;
+
+	if(g_debug_22.GetInt() > 1)
+		DevMsg("Accuracy penalty : %f \n", m_flAccuracyPenalty);
+
+	BaseClass::ItemPostFrame();
+
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	if ((pPlayer->m_nButtons & IN_ATTACK) == false && m_flSoonestPrimaryAttack <= gpGlobals->curtime)
+	{
+		m_flNextPrimaryAttack = gpGlobals->curtime - 0.1f;
+		m_bQuickShot = true;
+	}
+
+	CheckToggleHammer();
+}
+
+bool CWeapon22::Reload()
+{
+	const float temp = (GetMaxClip1() - m_iClip1) / 10.0f;
+
+	if ((m_flAccuracyPenalty - temp) >= WEAPON_22_ACCURACY_PENALTY_MIN)
+		m_flAccuracyPenalty -= temp;
+
+	return BaseClass::Reload();
+}
+
+void CWeapon22::AddViewKick()
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	//Disorient the player
+	QAngle angles = pPlayer->GetLocalAngles();
+
+	if (m_bHammerDown)
+	{
+		angles.x += random->RandomInt(-0.175f, 0.175f) * (m_flAccuracyPenalty / 14.0f) * 0.75f;
+		angles.y += random->RandomInt(-0.175f, 0.175f) * (m_flAccuracyPenalty / 12.0f) * 0.75f;
+	}
+	else
+	{
+		angles.x += random->RandomInt(-0.225f, 0.225f) * (m_flAccuracyPenalty / 14.0f) * 0.75f;
+		angles.y += random->RandomInt(-0.225f, 0.225f) * (m_flAccuracyPenalty / 12.0f) * 0.75f;
+	}
+
+	angles.z = 0;
+
+	pPlayer->SnapEyeAngles(angles);
+
+	//Like in the USP because the view drifts too much
+	pPlayer->ViewPunchReset();
+
+	pPlayer->ViewPunch(QAngle(-8, random->RandomFloat(-2, 2), 0));
+}
+
+void CWeapon22::PrimaryAttack()
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+
+	if (!pPlayer)
+		return;
+
+	if (m_iClip1 <= 0)
+	{
+		if (!m_bFireOnEmpty)
+			Reload();
+		else
+		{
+			WeaponSound(EMPTY);
+			m_flNextPrimaryAttack = 0.15;
+		}
+		return;
+	}
+
+	if (m_flAccuracyPenalty < 0)
+		m_flAccuracyPenalty = 0;
+	if (m_flAccuracyPenalty <= WEAPON_22_ACCURACY_PENALTY_MAX)
+		m_flAccuracyPenalty += 0.15f;
+
+	if (m_flAccuracyPenalty <= WEAPON_22_PERFECT_ACCURACY_TRESHOLD)
+		m_bPerfectShot = true;
+
+	m_iPrimaryAttacks++;
+	gamestats->Event_WeaponFired(pPlayer, true, GetClassname());
+
+	if (!m_bHammerDown)
+		WeaponSound(SINGLE);
+	else
+		WeaponSound(SPECIAL1);
+
+	pPlayer->DoMuzzleFlash();
+
+	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+	pPlayer->SetAnimation(PLAYER_ATTACK1);
+
+	m_flSoonestPrimaryAttack = gpGlobals->curtime + sk_22_firerate_real.GetFloat();
+	if (m_bHammerDown)
+		m_flSoonestPrimaryAttack += m_bQuickShot ? (sk_22_firerate_hammer_penalty.GetFloat() * 0.125f) : sk_22_firerate_hammer_penalty.GetFloat();
+	m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
+	m_iClip1--;
+
+	Vector vecSrc = pPlayer->Weapon_ShootPosition();
+	Vector vecAiming = pPlayer->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT);
+
+	const int ammo = m_bHammerDown ? m_iHammerAmmoType : m_iPrimaryAmmoType;
+	const float multiplier = m_bHammerDown ? m_flAccuracyPenalty * 0.5f : m_flAccuracyPenalty;
+	pPlayer->FireBullets(1, vecSrc, vecAiming, GetBulletSpread() * multiplier, MAX_TRACE_LENGTH, ammo, 1);
+	pPlayer->SetMuzzleFlashTime(gpGlobals->curtime + 0.5);
+
+	AddViewKick();
+
+	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), 600, 0.2, GetOwner());
+
+	//You need to pull it again
+	if ((g_debug_22.GetInt() >= 1) && m_bHammerDown)
+		DevMsg("Hammer reset ! \n");
+	m_bHammerDown = false;
+	
+	m_bQuickShot = false;
+	m_bPerfectShot = false;
+}
+
+void CWeapon22::CheckToggleHammer()
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	if (pPlayer->m_afButtonPressed & IN_ATTACK2 && (m_flHammerDelay <= gpGlobals->curtime))
+		ToggleHammer();
+}
+
+void CWeapon22::ToggleHammer()
+{
+	m_flHammerDelay = gpGlobals->curtime + WEAPON_22_HAMMER_DELAY;
+
+	WeaponSound(SPECIAL2);
+	m_bHammerDown = !m_bHammerDown;
+
+	m_flNextPrimaryAttack += 0.025f;
+
+	if (g_debug_22.GetInt() >= 1)
+		DevMsg("Hammer toggled ! current state : %i \n", m_bHammerDown);
+}
+
+void CWeapon22::FireNPCPrimaryAttack(CBaseCombatCharacter* pOperator, Vector& vecShootOrigin, Vector& vecShootDir)
+{
+	CSoundEnt::InsertSound(SOUND_COMBAT | SOUND_CONTEXT_GUNFIRE, pOperator->GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, pOperator, SOUNDENT_CHANNEL_WEAPON, pOperator->GetEnemy());
+
+	WeaponSound(SINGLE_NPC);
+	pOperator->FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_PRECALCULATED, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 1);
+	pOperator->DoMuzzleFlash();
+	m_iClip1--;
+}
+
+void CWeapon22::Operator_ForceNPCFire(CBaseCombatCharacter* pOperator, bool bSecondary)
+{
+	// Ensure we have enough rounds in the clip
+	m_iClip1++;
+
+	Vector vecShootOrigin, vecShootDir;
+	QAngle	angShootDir;
+	GetAttachment(LookupAttachment("muzzle"), vecShootOrigin, angShootDir);
+	AngleVectors(angShootDir, &vecShootDir);
+	FireNPCPrimaryAttack(pOperator, vecShootOrigin, vecShootDir);
+}
+
+void CWeapon22::Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator)
+{
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+
+	switch (pEvent->event)
+	{
+	case EVENT_WEAPON_RELOAD:
+	{
+		CEffectData data;
+
+		// Emit six spent shells
+		for (int i = 0; i < 6; i++)
+		{
+			data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector(-4, 4);
+			data.m_vAngles = QAngle(90, random->RandomInt(0, 360), 0);
+			data.m_nEntIndex = entindex();
+
+			DispatchEffect("ShellEject", data);
+		}
+
+		break;
+	}
+	case EVENT_WEAPON_PISTOL_FIRE:
+	{
+		Vector vecShootOrigin, vecShootDir;
+		vecShootOrigin = pOperator->Weapon_ShootPosition();
+
+		CAI_BaseNPC* npc = pOperator->MyNPCPointer();
+		ASSERT(npc != NULL);
+
+		vecShootDir = npc->GetActualShootTrajectory(vecShootOrigin);
+
+		FireNPCPrimaryAttack(pOperator, vecShootOrigin, vecShootDir);
+	}
+	break;
+	default:
+		BaseClass::Operator_HandleAnimEvent(pEvent, pOperator);
+		break;
+	}
 }

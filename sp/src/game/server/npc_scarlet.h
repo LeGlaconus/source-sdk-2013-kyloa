@@ -61,7 +61,8 @@ public:
 	virtual bool CanFlinch() { CAI_BaseActor::CanFlinch(); }
 
 	//I might want to override GetGameTextSpeechParams() for prototyping, it's here for the new mapbase debug text event
-
+	virtual bool GetGameTextSpeechParams(hudtextparms_t &params) { params.r1 = 64; params.g1 = 100; params.b1 = 255; return BaseClass::GetGameTextSpeechParams(params); }
+	
 	//Alyx overrides the jump gravity for some reason, I don't know if I want that
 
 

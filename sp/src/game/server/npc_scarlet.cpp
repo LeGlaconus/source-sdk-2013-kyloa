@@ -64,5 +64,6 @@ void CNPCScarlet::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE us
 {
 	BaseClass::Use();
 
+	
 	//Kyloa TODO : copy the Alyx Use() code and maybe modify it
 }
