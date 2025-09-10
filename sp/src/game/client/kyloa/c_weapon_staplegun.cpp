@@ -1,4 +1,5 @@
 #include "cbase.h"
+#include "tier0/memdbgon.h"
 //#include "c_weapon__stubs.h"
 //#include "c_basehlcombatweapon.h"
 //

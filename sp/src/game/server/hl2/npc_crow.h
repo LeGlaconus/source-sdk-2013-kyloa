@@ -103,6 +103,9 @@ public:
 	virtual void Spawn( void );
 	virtual void Precache( void );
 
+	//Kyloa
+	virtual bool AllowedToIgnite() override { return true; }
+
 	virtual Vector BodyTarget( const Vector &posSrc, bool bNoisy = true );
 
 	virtual int DrawDebugTextOverlays( void );

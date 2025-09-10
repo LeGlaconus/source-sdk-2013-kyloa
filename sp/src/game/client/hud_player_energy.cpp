@@ -10,6 +10,8 @@
 
 #include "c_weapon_staplegun.h"
 
+#include "tier0/memdbgon.h"
+
 using namespace vgui;
 
 class CHUDPlayerEnergy : public CHudNumericDisplay, public CHudElement

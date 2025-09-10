@@ -1,6 +1,8 @@
 #include "cbase.h"
 #include "fmod_manager.h"
 
+#include "tier0/memdbgon.h"
+
 using namespace FMOD;
 
 #ifdef KYLOA_FMOD

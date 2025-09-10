@@ -2,138 +2,28 @@
 
 #include "basehlcombatweapon.h"
 #include "cbase.h"
-#include "simple_physics.h"
-#include "tier1/utlvector.h"
-#include "saverestore_utlvector.h"
+#include "weapon_flamethrower_flames.h"
+#include "in_buttons.h"
+#include "particle_parse.h"
 
-#define FT_MAX_FLAMES 16u
-#define FT_FLAME_DEFAULT_LIFETIME 2.0f
+extern acttable_t* GetPistolActtable();
+extern int GetPistolActtableCount();
 
-//Prototyping only
-#define FT_FLAME_SPRITE "sprites/flatflame.vmt"
+static ConVar ft_fireeject_interval(			"ft_fireeject_interval",			"0.1",	FCVAR_CHEAT | FCVAR_REPLICATED);
+static ConVar ft_fireeject_interval_secondary(	"ft_fireeject_interval_secondary",	"0.35", FCVAR_CHEAT | FCVAR_REPLICATED);
+static ConVar ft_secondary_min_warmup_time(		"ft_secondary_min_warmup_time",		"0.25",	FCVAR_CHEAT | FCVAR_REPLICATED);
+static ConVar ft_secondary_max_warmup_time(		"ft_secondary_max_warmup_time",		"1.3",	FCVAR_CHEAT | FCVAR_REPLICATED);
 
-ConVar g_debug_ft("g_debug_ft", "0", FCVAR_CHEAT | FCVAR_ARCHIVE, "Shows debug info about the flamethrower and the flames");
+static ConVar g_debug_ft("g_debug_ft", "0", FCVAR_CHEAT | FCVAR_ARCHIVE, "Shows debug info about the flamethrower and the flames");
 
-class CWeaponFlamethrower;
-
-class C_FT_FlameElement : public CSimplePhysics::CNode
+enum class FT_State
 {
-	DECLARE_CLASS(C_FT_FlameElement, CSimplePhysics::CNode);
-public:
-	DECLARE_DATADESC();
-
-	C_FT_FlameElement()
-		:m_flLifetime(FT_FLAME_DEFAULT_LIFETIME), m_bActive(true)
-	{}
-
-	C_FT_FlameElement(Vector& vPos, float _flLifetime = FT_FLAME_DEFAULT_LIFETIME, bool _bActive = true)
-		:m_flLifetime(_flLifetime), m_bActive(_bActive)
-	{
-		Init(vPos);
-	}
-
-	C_FT_FlameElement(C_FT_FlameElement& _element)
-		:m_flLifetime(_element.m_flLifetime), m_bActive(_element.m_bActive)
-	{
-		m_vPos = _element.m_vPos;
-		m_vPrevPos = _element.m_vPrevPos;
-		m_vPredicted = _element.m_vPredicted;
-	}
-
-	C_FT_FlameElement(const C_FT_FlameElement& _element)
-		:m_flLifetime(_element.m_flLifetime), m_bActive(_element.m_bActive)
-	{
-		m_vPos = _element.m_vPos;
-		m_vPrevPos = _element.m_vPrevPos;
-		m_vPredicted = _element.m_vPredicted;
-	}
-
-	~C_FT_FlameElement()
-	{
-		m_vPos = m_vPredicted = m_vPrevPos = vec3_origin;
-		m_bActive = false;
-		m_flLifetime = -1.0f;
-	}
-
-	void* operator[](size_t idx);
-	const void* operator[](size_t idx) const;
-
-	void Delete();
-
-	inline bool IsActive() { return m_bActive; }
-
-	inline CSimplePhysics::CNode* GetNode() { return static_cast<CSimplePhysics::CNode*>(this); }
-
-	float m_flLifetime = 0.0f;
-	bool m_bActive = false;
+	Idle = 0,
+	Primary,
+	Secondary,
 };
 
-class C_FT_FlameManager
-{
-	DECLARE_CLASS_NOBASE(C_FT_FlameManager);
-public:
-
-	DECLARE_DATADESC();
-
-	C_FT_FlameManager()
-		:m_hPlayer(nullptr)
-	{
-		m_Flames.EnsureCapacity(FT_MAX_FLAMES);
-		m_pPhysicsDelegate.pManager = this;
-		m_pPhysics.Init(0.0f);
-	}
-
-	~C_FT_FlameManager()
-	{
-		//m_Flames.PurgeAndDeleteElements();
-		m_Flames.Purge();
-	}
-
-	void Init();
-	void Step(float dt);
-
-	void TerminateOldestFlame();
-	inline void TerminateFlame(size_t index) { DeleteFlame(index); } //Alias to DeleteFlame for now
-	void DeleteFlame(size_t index);
-	void AddFlame(C_FT_FlameElement& pElement);
-
-	inline CUtlVectorFixed<C_FT_FlameElement, FT_MAX_FLAMES>* GetFlameVector() { return &m_Flames; }
-	inline int GetCurrentFlames() { return m_Flames.Count(); }
-	inline CBasePlayer* GetCurrentPlayer() { return m_hPlayer.Get(); }
-	inline CBasePlayerHandle* GetCurrentPlayerHandle() { return &m_hPlayer; }
-	inline CWeaponFlamethrower* GetCurrentWeapon() { return m_hFlamethrower.Get(); }
-	inline CHandle<CWeaponFlamethrower>* GetCurrentWeaponHandle() { return &m_hFlamethrower; }
-	
-	inline void SetWishDir(QAngle& vWishDir) 
-	{
-		AngleVectors(vWishDir, &m_vWishDir);
-	}
-
-
-	class CPhysicsDelegate : public CSimplePhysics::IHelper
-	{
-		DECLARE_CLASS(C_FT_FlameManager::CPhysicsDelegate, CSimplePhysics::IHelper);
-
-	public:
-		virtual void	GetNodeForces(CSimplePhysics::CNode* pNodes, int iNode, Vector* pAccel);
-		virtual void	ApplyConstraints(CSimplePhysics::CNode* pNodes, int nNodes);
-
-		C_FT_FlameManager* pManager;
-	};
-	friend class CPhysicsDelegate;
-
-private:
-	CUtlVectorFixed<C_FT_FlameElement, FT_MAX_FLAMES> m_Flames;
-
-	CPhysicsDelegate m_pPhysicsDelegate;
-	CSimplePhysics m_pPhysics;
-
-	CBasePlayerHandle m_hPlayer;
-	CHandle<CWeaponFlamethrower> m_hFlamethrower;
-
-	//Velocity added to every newly created particle, it's mainly the character's angles
-	Vector m_vWishDir;
-};
+class C_FT_Flame;
 
 class CWeaponFlamethrower : public CBaseHLCombatWeapon
 {
@@ -145,15 +35,31 @@ public:
 
 	CWeaponFlamethrower();
 
-	int CapabilitiesGet() { return bits_CAP_WEAPON_RANGE_ATTACK1; }
+	void Precache();
+	
+	int CapabilitiesGet() { return bits_CAP_WEAPON_RANGE_ATTACK1 | bits_CAP_WEAPON_RANGE_ATTACK2; }
 	WeaponClass_t WeaponClassify() { return WEPCLASS_HEAVY; }
 
 	void ItemPostFrame();
-	inline void ThrowFlame();
+	C_FT_Flame* ThrowFlame(CBasePlayer* pPlayer, Vector& vShootPosition, QAngle& vShootDir);
 	void PrimaryAttack();
+	K_NOINLINE void SecondaryAttackWarmup();
+	K_NOINLINE void SecondaryAttack(float flLength);
+	K_NOINLINE void SecondaryAttackRelease();
 
-	void Think();
+	void WeaponIdle();
+
+	bool UsesClipsForAmmo1() const { return false; }
+
+	#ifdef MAPBASE
+	virtual acttable_t*		GetBackupActivityList()			{ return GetPistolActtable();		}
+	virtual int				GetBackupActivityListCount()	{ return GetPistolActtableCount();	}
+	#endif
 
 private:
-	C_FT_FlameManager m_FTManager;
+	float	m_flFireEjectStopTime;
+	float	m_flNextFireEjectTime;
+	float	m_flWarmupTime;
+
+	CNetworkVar(FT_State, m_eState);
 };

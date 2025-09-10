@@ -1,6 +1,8 @@
 #include "cbase.h"
 #include "weapon_pipe.h"
 
+#include "tier0/memdbgon.h"
+
 LINK_ENTITY_TO_CLASS(weapon_pipe, CWeaponPipe);
 PRECACHE_REGISTER(weapon_pipe);
 

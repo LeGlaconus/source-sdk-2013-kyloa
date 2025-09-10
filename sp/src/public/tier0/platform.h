@@ -1621,5 +1621,13 @@ extern "C" int V_tier0_stricmp(const char *s1, const char *s2 );
 #define strcmpi(s1,s2) V_tier0_stricmp( s1, s2 )
 #endif
 
+//Kyloa :
+#ifdef WIN32
+#define K_NOINLINE __declspec(noinline)
+#else
+//Kyloa TODO
+#define K_NOINLINE 
+#endif //WIN32
+
 
 #endif /* PLATFORM_H */

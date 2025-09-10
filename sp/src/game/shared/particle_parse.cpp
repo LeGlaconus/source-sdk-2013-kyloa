@@ -289,6 +289,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 	data.m_nHitBox = GetParticleSystemIndex( pszParticleName );
 	if ( pEntity )
 	{
+		data.m_vOrigin = pEntity->GetAbsOrigin(); //Kyloa : supposed to fix an attachment bug
 #ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
 #else
@@ -342,6 +343,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 	data.m_nHitBox = GetParticleSystemIndex( pszParticleName );
 	if ( pEntity )
 	{
+		data.m_vOrigin = pEntity->GetAbsOrigin(); //Kyloa : supposed to fix an attachment bug
 #ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
 #else
@@ -394,6 +396,7 @@ void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart
 
 	if ( pEntity )
 	{
+		data.m_vOrigin = pEntity->GetAbsOrigin(); //Kyloa : supposed to fix an attachment bug
 #ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
 #else
@@ -430,6 +433,7 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAng
 
 	if ( pEntity )
 	{
+		data.m_vOrigin = pEntity->GetAbsOrigin(); //Kyloa : supposed to fix an attachment bug
 #ifdef CLIENT_DLL
 		data.m_hEntity = pEntity;
 #else

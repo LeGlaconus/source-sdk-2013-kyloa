@@ -6578,6 +6578,9 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_energyar" );
 		engine->ClientCommand(this->edict(), "energy_refillenergyar\n");
 
+		GiveNamedItem("weapon_flamethrower");
+		GiveAmmo(100, "Flamethrower");
+
 #endif
 		if ( GetHealth() < 100 )
 		{

@@ -2,10 +2,12 @@
 #include "icvar.h"
 #include "hl2_player.h"
 
+#include "tier0/memdbgon.h"
+
 static void RefillEnergyStaplegun_f(const CCommand& args)
 {
-	CHL2_Player* player = (CHL2_Player*)UTIL_GetLocalPlayer();
-	if (player != nullptr)
+	CHL2_Player* player = (CHL2_Player*)UTIL_GetCommandClient();
+	if (player)
 	{
 		player->SetMaxEnergy(ENERGY_MAX_STAPLEGUN);
 		player->SetEnergy(ENERGY_MAX_STAPLEGUN);
@@ -15,8 +17,8 @@ static void RefillEnergyStaplegun_f(const CCommand& args)
 
 static void RefillEnergyEnergyAr_f(const CCommand& args)
 {
-	CHL2_Player* player = (CHL2_Player*)UTIL_GetLocalPlayer();
-	if (player != nullptr)
+	CHL2_Player* player = (CHL2_Player*)UTIL_GetCommandClient();
+	if (player)
 	{
 		player->SetMaxEnergy(ENERGY_MAX_ENERGYAR);
 		player->SetEnergy(ENERGY_MAX_ENERGYAR);
@@ -32,7 +34,7 @@ CON_COMMAND_F(colonthree, ":3", FCVAR_CHEAT)
 	uint num = 10u;
 	if (args.ArgC() >= 1)
 		num = atoi(args.Arg(1));
-	for (int i = 0; i <= num; ++i)
+	for (uint i = 0; i < num; ++i)
 	{
 		Msg(":3\n");
 	}

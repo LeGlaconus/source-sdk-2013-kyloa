@@ -45,6 +45,10 @@
 #define SIZE_AMMO_22				6
 #define SIZE_AMMO_22_LARGE			9
 
+//Kyloa
+#define SIZE_AMMO_FT				8
+#define SIZE_AMMO_FT_LARGE			16
+
 #define SF_ITEM_START_CONSTRAINED	0x00000001
 #ifdef MAPBASE
 // Copied from CBaseCombatWeapon's flags, including any additions we made to those.

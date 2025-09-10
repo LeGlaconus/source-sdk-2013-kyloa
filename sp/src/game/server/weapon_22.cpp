@@ -2,6 +2,8 @@
 
 #include "weapon_22.h"
 
+#include "tier0/memdbgon.h"
+
 LINK_ENTITY_TO_CLASS(weapon_22, CWeapon22);
 
 PRECACHE_WEAPON_REGISTER(weapon_22);

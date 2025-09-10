@@ -2,6 +2,8 @@
 
 #include "npc_human.h"
 
+#include "tier0/memdbgon.h"
+
 void CNPCHuman::Spawn()
 {
 	BaseClass::Spawn();

@@ -2,6 +2,8 @@
 
 #include "npc_crawler.h"
 
+#include "tier0/memdbgon.h"
+
 LINK_ENTITY_TO_CLASS(npc_crawler, CNPCCrawler);
 
 BEGIN_DATADESC(CNPCCrawler)
@@ -76,7 +78,8 @@ void CNPCCrawler::DeathSound(const CTakeDamageInfo& info)
 void CNPCCrawler::PainSound(const CTakeDamageInfo& info)
 {
 	//Kyloa TODO : I should probably play different sounds depending on the type / value
-	EmitSound("NPC_Crawler.Pain");
+	if (info.GetDamage() > 8.0f)
+		EmitSound("NPC_Crawler.Pain");
 }
 
 bool CNPCCrawler::ShouldPlayIdleSound()
@@ -132,4 +135,19 @@ void CNPCCrawler::InputStartExtract(inputdata_t &inputData)
 	//Play sound
 	EmitSound("NPC_Crawler.DeathFinality");
 	//Play particle
+}
+
+extern int AE_ZOMBIE_STEP_LEFT;
+extern int AE_ZOMBIE_STEP_RIGHT;
+extern int AE_ZOMBIE_SCUFF_LEFT;
+extern int AE_ZOMBIE_SCUFF_RIGHT;
+
+void CNPCCrawler::HandleAnimEvent(animevent_t* pEvent)
+{
+	if(pEvent->event == AE_ZOMBIE_STEP_LEFT) { return; }
+	if(pEvent->event == AE_ZOMBIE_STEP_RIGHT) { return; }
+	if(pEvent->event == AE_ZOMBIE_SCUFF_LEFT) { return; }
+	if(pEvent->event == AE_ZOMBIE_SCUFF_RIGHT) { return; }
+
+	BaseClass::HandleAnimEvent(pEvent);
 }

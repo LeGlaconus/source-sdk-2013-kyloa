@@ -2,6 +2,8 @@
 
 #include "npc_scarlet.h"
 
+#include "tier0/memdbgon.h"
+
 LINK_ENTITY_TO_CLASS(npc_scarlet, CNPCScarlet);
 
 BEGIN_DATADESC(CNPCScarlet)

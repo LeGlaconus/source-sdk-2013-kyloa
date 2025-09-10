@@ -486,6 +486,11 @@ public:
 	void					SetMoveType( MoveType_t val, MoveCollide_t moveCollide = MOVECOLLIDE_DEFAULT );
 	void					SetMoveCollide( MoveCollide_t val );
 
+	//Custom
+	inline void				SetTakeDamage(int takedamage);
+	inline int				GetTakeDamage() const;
+
+
 	// Returns the entity-to-world transform
 	matrix3x4_t				&EntityToWorldTransform();
 	const matrix3x4_t		&EntityToWorldTransform() const;
@@ -2870,6 +2875,17 @@ inline void CBaseEntity::SetSolidFlags( int flags )
 inline SolidType_t CBaseEntity::GetSolid() const
 {
 	return CollisionProp()->GetSolid();
+}
+
+//Custom
+inline void CBaseEntity::SetTakeDamage(int takedamage)
+{
+	m_takedamage = takedamage;
+}
+
+inline int CBaseEntity::GetTakeDamage() const
+{
+	return m_takedamage;
 }
 
 		 	 			 

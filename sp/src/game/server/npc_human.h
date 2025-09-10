@@ -7,4 +7,6 @@ class CNPCHuman : public CNPC_Citizen
 	DECLARE_CLASS(CNPCHuman, CNPC_Citizen);
 public:
 	void Spawn() override;
+
+	virtual bool AllowedToIgnite() override { return true; }
 };

@@ -1,6 +1,8 @@
 #include "convar.h"
 #include "cbase.h"
 
+#include "tier0/memdbgon.h"
+
 //uhhhhh
 extern ConCommand viewpunch_debug;
 

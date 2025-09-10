@@ -18,4 +18,4 @@ STUB_WEAPON_CLASS(weapon_energyar, WeaponEnergyAr, C_HLMachineGun);
 STUB_WEAPON_CLASS(weapon_uspmatch, WeaponUSPMatch, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_glock, WeaponGlock, C_BaseHLCombatWeapon);
 STUB_WEAPON_CLASS(weapon_22, Weapon22, C_BaseHLCombatWeapon);
-STUB_WEAPON_CLASS(weapon_flamethrower, WeaponFlamethrower, C_BaseHLCombatWeapon);
+//STUB_WEAPON_CLASS(weapon_flamethrower, WeaponFlamethrower, C_BaseHLCombatWeapon);

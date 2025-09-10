@@ -4,6 +4,7 @@
 #include "ai_basenpc.h"
 #include "game.h"
 #include "item_energy_nugget.h"
+#include "npcevent.h"
 
 ConVar sk_crawler_health("sk_crawler_health", "0");
 
@@ -24,6 +25,7 @@ public:
 	void PainSound(const CTakeDamageInfo& info);
 	void IdleSound();
 	bool ShouldPlayIdleSound() override;
+	virtual bool AllowedToIgnite() override { return true; }
 
 	//todo, might want to make him hide from the bright flashlight when in the underground sections
 	//that would also involve creating a new global
@@ -37,7 +39,7 @@ public:
 
 	Class_T Classify();
 
-	void HandleAnimEvent(animevent_t* pEvent) { BaseClass::HandleAnimEvent(pEvent); } //for footstep sounds, particles (?) and possibly more
+	void HandleAnimEvent(animevent_t* pEvent); //for footstep sounds, particles (?) and possibly more
 
 	void Event_Killed(const CTakeDamageInfo& info);
 

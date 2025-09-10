@@ -5,6 +5,8 @@
 #include "baseachievement.h"
 #include "achievementmgr.h"
 
+#include "tier0/memdbgon.h"
+
 CAchievementMgr g_AchievementMgrKyloa;
 
 #define ACHIEVEMENT_KYLOA_GET_STAPLEGUN 1

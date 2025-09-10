@@ -1,6 +1,8 @@
 #include "cbase.h"
 #include "energyaccessor.h"
 
+#include "tier0/memdbgon.h"
+
 IBaseEnergyAccessor::IBaseEnergyAccessor()
 {
 	FindPlayer();

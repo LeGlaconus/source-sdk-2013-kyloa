@@ -1,123 +1,7 @@
 #include "cbase.h"
 #include "weapon_flamethrower.h"
 
-//---------------
-// Flame element
-//---------------
-
-BEGIN_DATADESC_NO_BASE(C_FT_FlameElement)
-DEFINE_FIELD(m_vPos, FIELD_VECTOR),
-DEFINE_FIELD(m_vPrevPos, FIELD_VECTOR),
-DEFINE_FIELD(m_vPredicted, FIELD_VECTOR),
-
-DEFINE_FIELD(m_bActive, FIELD_BOOLEAN),
-DEFINE_FIELD(m_flLifetime, FIELD_FLOAT),
-END_DATADESC();
-
-void C_FT_FlameElement::Delete()
-{
-	m_vPos = m_vPrevPos = m_vPredicted = vec3_origin;
-	m_bActive = false;
-	m_flLifetime = -1.0f;
-}
-
-#pragma warning(push)
-#pragma warning(disable : 6305)
-void* C_FT_FlameElement::operator[] (size_t idx)
-{
-	return this + (sizeof(*this) * idx);
-}
-
-const void* C_FT_FlameElement::operator[] (size_t idx) const
-{
-	return this + (sizeof(*this) * idx);
-}
-#pragma warning(pop)
-
-//---------------
-// Flame manager
-//---------------
-
-BEGIN_DATADESC_NO_BASE(C_FT_FlameManager)
-DEFINE_UTLVECTOR(m_Flames, FIELD_EMBEDDED),
-DEFINE_FIELD(m_hPlayer, FIELD_EHANDLE),
-DEFINE_FIELD(m_hFlamethrower, FIELD_EHANDLE),
-END_DATADESC();
-
-void C_FT_FlameManager::Init()
-{
-	return;
-}
-
-void C_FT_FlameManager::Step(float dt)
-{
-	for (size_t i = 0; i < (uint)m_Flames.Count(); i++)
-	{
-		C_FT_FlameElement* pCurFlameElement = &m_Flames[i];
-		if(pCurFlameElement->IsActive())
-			pCurFlameElement->m_flLifetime -= dt;
-		if (pCurFlameElement->m_flLifetime < 0.0f)
-			DeleteFlame(i);
-
-		//debug
-		if(g_debug_ft.GetBool())
-			NDebugOverlay::Cross3D(pCurFlameElement->m_vPos, 1.0f, 255, 0, 0, true, dt);
-	}
-
-	if (g_debug_ft.GetBool())
-		DevMsg("dt : %f\n", dt);
-
-	m_pPhysics.Simulate(m_Flames.Base()->GetNode(), m_Flames.Count(), &m_pPhysicsDelegate, dt, 0.0f);
-}
-
-void C_FT_FlameManager::TerminateOldestFlame()
-{
-	uint iLowestIndex = 0;
-	float iLowestLifetime = 0.0f;
-
-	for (size_t i = 0; i < (uint)m_Flames.Count(); i++)
-	{
-		if (m_Flames[i].m_flLifetime < iLowestLifetime)
-			iLowestIndex = i;
-	}
-
-	TerminateFlame(iLowestIndex);
-}
-
-void C_FT_FlameManager::DeleteFlame(size_t index)
-{
-	m_Flames.Remove(index);
-}
-
-void C_FT_FlameManager::AddFlame(C_FT_FlameElement& pElement)
-{
-	if (m_Flames.Count() > FT_MAX_FLAMES)
-		TerminateOldestFlame();
-	else
-	{
-		//pElement.m_vPrevPos = pElement.m_vPos - m_vWishDir;
-		m_Flames.AddToTail(pElement);
-	}
-}
-
-void C_FT_FlameManager::CPhysicsDelegate::GetNodeForces(CSimplePhysics::CNode* pNodes, int iNode, Vector* pAccel)
-{
-	if (!pManager->GetCurrentPlayerHandle()->IsValid())
-		return;
-
-	C_FT_FlameElement* pCurFlame = &pManager->GetFlameVector()->Element(iNode);
-	Vector vLookDir;
-	pManager->GetCurrentPlayer()->EyeVectors(&vLookDir);
-	VectorNormalize(vLookDir);
-
-	//temp
-	*pAccel = vLookDir * 25.0f;
-}
-
-void C_FT_FlameManager::CPhysicsDelegate::ApplyConstraints(CSimplePhysics::CNode* pNodes, int nNodes)
-{
-	return;
-}
+#include "tier0/memdbgon.h"
 
 //------------
 // Weapon
@@ -127,63 +11,177 @@ LINK_ENTITY_TO_CLASS(weapon_flamethrower, CWeaponFlamethrower);
 PRECACHE_WEAPON_REGISTER(weapon_flamethrower);
 
 IMPLEMENT_SERVERCLASS_ST(CWeaponFlamethrower, DT_WeaponFlamethrower)
+	SendPropInt(SENDINFO(m_eState)),
 END_SEND_TABLE();
 
 BEGIN_DATADESC(CWeaponFlamethrower)
-DEFINE_FIELD(m_FTManager, FIELD_EMBEDDED),
-END_DATADESC()
+DEFINE_FIELD(m_flFireEjectStopTime, FIELD_TIME),
+DEFINE_FIELD(m_flNextFireEjectTime, FIELD_TIME),
+DEFINE_FIELD(m_flWarmupTime,		FIELD_FLOAT), //generic unit not real time
+DEFINE_FIELD(m_eState,				FIELD_INTEGER),
+END_DATADESC();
 
 CWeaponFlamethrower::CWeaponFlamethrower()
+	:BaseClass()
 {
 	m_fMinRange1 = m_fMinRange2 = 32;
 	m_fMaxRange1 = m_fMaxRange2 = 192;
 
-	m_FTManager.Init();
-	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
-	if (pPlayer)
-		m_FTManager.GetCurrentPlayerHandle()->Set(pPlayer);
-	m_FTManager.GetCurrentWeaponHandle()->Set(this);
+	m_iPrimaryAttacks = 0;
+	m_bFiresUnderwater = false;
+}
+
+void CWeaponFlamethrower::Precache()
+{
+	BaseClass::Precache();
+
+	PrecacheScriptSound("Weapon_Flamethrower.LightUpFire");
+	PrecacheParticleSystem("ft_flame");
+	PrecacheParticleSystem("ft_flamejet");
+	PrecacheParticleSystem("ft_flame_sec");
 }
 
 void CWeaponFlamethrower::ItemPostFrame()
-{
-	//CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
-	//if (!pPlayer)
-	//	return;
-
-	BaseClass::ItemPostFrame();
-}
-
-inline void CWeaponFlamethrower::ThrowFlame()
 {
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 	if (!pPlayer)
 		return;
 
-	static Vector vShootPosition = pPlayer->Weapon_ShootPosition();
+	if (pPlayer->m_nButtons & IN_ATTACK)
+		PrimaryAttack();
+	else if (pPlayer->m_nButtons & IN_ATTACK2)
+		SecondaryAttackWarmup();
+	else if (pPlayer->m_afButtonReleased & IN_ATTACK2)
+	{
+		if (gpGlobals->curtime >= m_flNextFireEjectTime)
+			SecondaryAttackRelease();
+	}
+	else
+		WeaponIdle();
+}
 
-	static QAngle vShootDir = pPlayer->GetLocalAngles();
-	m_FTManager.SetWishDir(vShootDir);
+void CWeaponFlamethrower::WeaponIdle()
+{
+	m_eState = FT_State::Idle;
 
-	C_FT_FlameElement flame(vShootPosition);
-	m_FTManager.AddFlame(flame);
+	BaseClass::WeaponIdle();
+}
+
+C_FT_Flame* CWeaponFlamethrower::ThrowFlame(CBasePlayer* pPlayer, Vector& vShootPosition, QAngle& vShootDir)
+{
+	C_FT_Flame* pFlame = C_FT_Flame::Create(vShootPosition, vShootDir, this, ft_flame_velocity.GetFloat());
+
+	return pFlame;
 }
 
 void CWeaponFlamethrower::PrimaryAttack()
 {
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.5f;
+	if (gpGlobals->curtime < m_flNextFireEjectTime)
+		return;
 
-	if (m_iClip1 > 0)
+	m_flNextFireEjectTime = gpGlobals->curtime + ft_fireeject_interval.GetFloat();
+
+		CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+		if (!pPlayer)
+			return;
+
+	if (pPlayer->GetWaterLevel() == 3 && !m_bFiresUnderwater)
 	{
-		ThrowFlame();
-		m_iClip1;
+		// This weapon doesn't fire underwater
+		m_eState = FT_State::Idle;
+		WeaponSound(EMPTY);
+		return;
+	}
+
+	if (HasPrimaryAmmo())
+	{
+		Vector vShootPosition = pPlayer->Weapon_ShootPosition();
+		QAngle vShootDir = pPlayer->GetLocalAngles();
+
+		//Vector vShootPosition;
+		//QAngle vShootDir;
+		//GetAttachment("flameout", vShootPosition, vShootDir);
+
+		m_eState = FT_State::Primary;
+
+		ThrowFlame(pPlayer, vShootPosition, vShootDir);
+
+		m_iPrimaryAttacks++;
+		if((m_iPrimaryAttacks % 4) == 0)
+			pPlayer->RemoveAmmo(1, GetPrimaryAmmoType());
 	}
 }
 
-void CWeaponFlamethrower::Think()
+void CWeaponFlamethrower::SecondaryAttackWarmup()
 {
-	const float dt = TICKS_TO_TIME(m_nLastThinkTick) - gpGlobals->curtime;
-	m_FTManager.Step(dt);
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
 
-	SetNextThink(gpGlobals->curtime + 0.125f);
+	if (gpGlobals->curtime < m_flNextFireEjectTime)
+		return;
+
+	if (!HasPrimaryAmmo())
+	{
+		WeaponSound(EMPTY);
+		m_flNextFireEjectTime = gpGlobals->curtime + ft_fireeject_interval_secondary.GetFloat();
+		return;
+	}
+
+	m_flWarmupTime += gpGlobals->frametime;
+
+	if (g_debug_ft.GetInt() >= 2)
+		DevMsg("Warmup Time : %f\n", m_flWarmupTime);
+
+	if(m_flWarmupTime <= ft_secondary_min_warmup_time.GetFloat())
+		UTIL_ScreenShake(pPlayer->WorldSpaceCenter(), 4.0f, 2.5f, ft_secondary_max_warmup_time.GetFloat(), 256.0f, SHAKE_START, true);
+	else
+		UTIL_ScreenShake(pPlayer->WorldSpaceCenter(), 4.0f, Max(2.5f, m_flWarmupTime / (ft_secondary_max_warmup_time.GetFloat() / 4.0f)), ft_secondary_max_warmup_time.GetFloat(), 256.0f, SHAKE_FREQUENCY, true);
+
+	if (m_flWarmupTime >= ft_secondary_max_warmup_time.GetFloat())
+		SecondaryAttackRelease();
+}
+
+void CWeaponFlamethrower::SecondaryAttackRelease()
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	UTIL_ScreenShake(pPlayer->WorldSpaceCenter(), 4.0f, 2.5f, 2.0f, 256.0f, SHAKE_STOP, true);
+
+	if (m_flWarmupTime <= ft_secondary_min_warmup_time.GetFloat())
+		return;
+
+	const float flLengthRemapped = (m_flWarmupTime * 1.5f) / ft_secondary_max_warmup_time.GetFloat();
+
+	m_flWarmupTime = 0.0f;
+
+	SecondaryAttack(flLengthRemapped);
+}
+
+void CWeaponFlamethrower::SecondaryAttack(float flLength)
+{
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+	if (!pPlayer)
+		return;
+
+	m_flNextFireEjectTime = gpGlobals->curtime + ft_fireeject_interval_secondary.GetFloat();
+
+	if(g_debug_ft.GetBool())
+		DevMsg("Secondary Attack ! Length : %f\n", flLength);
+
+	constexpr const int iNumFlames = 8;
+
+	C_FT_Flame* aFlames[iNumFlames];
+	for (size_t i = 0; i < iNumFlames; i++)
+	{
+		aFlames[i] = ThrowFlame(pPlayer, pPlayer->Weapon_ShootPosition(), (QAngle&)pPlayer->GetLocalAngles());
+		const Vector vPrevBaseVelocity = aFlames[i]->GetBaseVelocity();
+		aFlames[i]->SetBaseVelocity(vPrevBaseVelocity * 1.75f * Max(1.0f, flLength));
+	}
+
+	m_iClip1 -= 4.0f;
+
+	DispatchParticleEffect("ft_flame_sec", PATTACH_POINT_FOLLOW, (CBaseEntity*)this, "flameout", vec3_origin, vec3_origin, false);
 }

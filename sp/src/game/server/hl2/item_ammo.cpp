@@ -803,6 +803,66 @@ class CItem_22Large : public CItem
 };
 LINK_ENTITY_TO_CLASS(item_ammo_22_large, CItem_22Large);
 
+class CItem_FT : public CItem
+{
+	DECLARE_CLASS(CItem_FT, CItem);
+
+	void Spawn()
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+
+		BaseClass::Spawn();
+	}
+	void Precache()
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_FT, "Flamethrower"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_ft, CItem_FT);
+
+class CItem_FTLarge : public CItem
+{
+	DECLARE_CLASS(CItem_FTLarge, CItem);
+
+	void Spawn()
+	{
+		Precache();
+		SetModel("models/items/boxsrounds.mdl");
+
+		BaseClass::Spawn();
+	}
+	void Precache()
+	{
+		PrecacheModel("models/items/boxsrounds.mdl");
+	}
+	bool MyTouch(CBasePlayer* pPlayer)
+	{
+		if (ITEM_GiveAmmo(pPlayer, SIZE_AMMO_FT_LARGE, "Flamethrower"))
+		{
+			if (g_pGameRules->ItemShouldRespawn(this) == GR_ITEM_RESPAWN_NO)
+			{
+				UTIL_Remove(this);
+			}
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_ammo_ft_large, CItem_FTLarge);
+
 // ==================================================================
 // Ammo crate which will supply infinite ammo of the specified type
 // ==================================================================
