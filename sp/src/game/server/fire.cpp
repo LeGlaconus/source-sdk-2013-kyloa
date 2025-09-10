@@ -592,7 +592,8 @@ void CFire::StartFire( bool bPlayFTSound )
 	if ( m_hEffect != NULL )
 		return;
 
-	EmitSound("Weapon_Flamethrower.LightUpFire"); //precached by the weapon
+	if(bPlayFTSound)
+		EmitSound("Weapon_Flamethrower.LightUpFire"); //precached by the weapon
 
 	// Trace down and start a fire there. Nothing fancy yet.
 	Vector vFirePos;
