@@ -19,16 +19,24 @@ DEFINE_FIELD(m_flFireEjectStopTime, FIELD_TIME),
 DEFINE_FIELD(m_flNextFireEjectTime, FIELD_TIME),
 DEFINE_FIELD(m_flWarmupTime,		FIELD_FLOAT), //generic unit not real time
 DEFINE_FIELD(m_eState,				FIELD_INTEGER),
+DEFINE_SOUNDPATCH(m_pFireEjectSoundPatch),
 END_DATADESC();
 
+
 CWeaponFlamethrower::CWeaponFlamethrower()
-	:BaseClass()
+	:m_pFireEjectSoundPatch(nullptr), BaseClass()
 {
 	m_fMinRange1 = m_fMinRange2 = 32;
 	m_fMaxRange1 = m_fMaxRange2 = 192;
 
 	m_iPrimaryAttacks = 0;
 	m_bFiresUnderwater = false;
+}
+
+CWeaponFlamethrower::~CWeaponFlamethrower()
+{
+	CSoundEnvelopeController& controller = CSoundEnvelopeController::GetController();
+	controller.SoundDestroy(m_pFireEjectSoundPatch);
 }
 
 void CWeaponFlamethrower::Precache()
@@ -39,6 +47,15 @@ void CWeaponFlamethrower::Precache()
 	PrecacheParticleSystem("ft_flame");
 	PrecacheParticleSystem("ft_flamejet");
 	PrecacheParticleSystem("ft_flame_sec");
+}
+
+void CWeaponFlamethrower::Spawn()
+{
+	BaseClass::Spawn();
+	
+	CSoundEnvelopeController& controller = CSoundEnvelopeController::GetController();
+	CPASAttenuationFilter filter(this);
+	m_pFireEjectSoundPatch = controller.SoundCreate(filter, entindex(), GetShootSound(SINGLE));
 }
 
 void CWeaponFlamethrower::ItemPostFrame()
@@ -58,6 +75,20 @@ void CWeaponFlamethrower::ItemPostFrame()
 	}
 	else
 		WeaponIdle();
+
+	if(pPlayer->m_afButtonReleased & IN_ATTACK)
+		if (!(pPlayer->m_nButtons & IN_ATTACK))
+		{
+			StopFireEjectSound();
+			WeaponSound(SPECIAL1);
+		}
+
+}
+
+void CWeaponFlamethrower::StopFireEjectSound()
+{
+	CSoundEnvelopeController& controller = CSoundEnvelopeController::GetController();
+	controller.SoundChangeVolume(m_pFireEjectSoundPatch, 0.0f, 1.0f);
 }
 
 void CWeaponFlamethrower::WeaponIdle()
@@ -89,6 +120,9 @@ void CWeaponFlamethrower::PrimaryAttack()
 	{
 		// This weapon doesn't fire underwater
 		m_eState = FT_State::Idle;
+
+		StopFireEjectSound();
+
 		WeaponSound(EMPTY);
 		return;
 	}
@@ -109,6 +143,10 @@ void CWeaponFlamethrower::PrimaryAttack()
 		m_iPrimaryAttacks++;
 		if((m_iPrimaryAttacks % 4) == 0)
 			pPlayer->RemoveAmmo(1, GetPrimaryAmmoType());
+
+
+		CSoundEnvelopeController& controller = CSoundEnvelopeController::GetController();
+		controller.Play(m_pFireEjectSoundPatch, VOL_NORM, PITCH_NORM);
 	}
 }
 
@@ -182,6 +220,8 @@ void CWeaponFlamethrower::SecondaryAttack(float flLength)
 	}
 
 	m_iClip1 -= 4.0f;
+
+	WeaponSound(WPN_DOUBLE);
 
 	DispatchParticleEffect("ft_flame_sec", PATTACH_POINT_FOLLOW, (CBaseEntity*)this, "flameout", vec3_origin, vec3_origin, false);
 }

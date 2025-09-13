@@ -5,6 +5,7 @@
 #include "weapon_flamethrower_flames.h"
 #include "in_buttons.h"
 #include "particle_parse.h"
+#include "soundenvelope.h"
 
 extern acttable_t* GetPistolActtable();
 extern int GetPistolActtableCount();
@@ -34,9 +35,12 @@ public:
 	DECLARE_DATADESC();
 
 	CWeaponFlamethrower();
+	~CWeaponFlamethrower();
 
 	void Precache();
 	
+	void Spawn();
+
 	int CapabilitiesGet() { return bits_CAP_WEAPON_RANGE_ATTACK1 | bits_CAP_WEAPON_RANGE_ATTACK2; }
 	WeaponClass_t WeaponClassify() { return WEPCLASS_HEAVY; }
 
@@ -48,6 +52,8 @@ public:
 	K_NOINLINE void SecondaryAttackRelease();
 
 	void WeaponIdle();
+	
+	void StopFireEjectSound();
 
 	bool UsesClipsForAmmo1() const { return false; }
 
@@ -60,6 +66,8 @@ private:
 	float	m_flFireEjectStopTime;
 	float	m_flNextFireEjectTime;
 	float	m_flWarmupTime;
+
+	CSoundPatch* m_pFireEjectSoundPatch;
 
 	CNetworkVar(FT_State, m_eState);
 };

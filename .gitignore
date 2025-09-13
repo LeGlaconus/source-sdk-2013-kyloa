@@ -91,3 +91,12 @@ sp/src/vgui2/*.pdb
 
 # Build support files
 sp/src/devtools/gcc9+support.o
+sp/src/utils/vbsp/Release/
+sp/src/utils/vvis_launcher/Release/
+sp/src/utils/vvis/Release/
+sp/src/utils/vrad_launcher/Release/
+sp/src/utils/vrad/Release/
+*.pdb
+*.lib
+*.exe
+*.dll

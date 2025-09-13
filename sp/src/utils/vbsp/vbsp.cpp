@@ -931,9 +931,9 @@ int RunVBSP( int argc, char **argv )
 	Q_FileBase( source, mapbase, sizeof( mapbase ) );
 	strlwr( mapbase );
 
-	LoadCmdLineFromFile( argc, argv, mapbase, "kyloa_bsp" );
+	LoadCmdLineFromFile( argc, argv, mapbase, "kbsp" );
 
-	Msg( "Valve Software + Le Glaconus - kyloa_bsp.exe (%s)\n", __DATE__ );
+	Msg( "Valve Software + Le Glaconus - kbsp.exe :3 (%s)\n", __TIMESTAMP__);
 
 	for (i=1 ; i<argc ; i++)
 	{

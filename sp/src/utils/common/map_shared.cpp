@@ -40,6 +40,12 @@ ChunkFileResult_t LoadEntityKeyCallback(const char *szKey, const char *szValue, 
 			// apparently unnecessary, nobody should use func_water anyways
 			//pLoadEntity->nBaseContents = CONTENTS_WATER;
 		}
+		//Kyloa : func_detail_passable
+		else if (!stricmp(szValue, "func_detail_passable"))
+		{
+			pLoadEntity->nBaseContents = CONTENTS_DETAIL | CONTENTS_OPAQUE;
+		}
+
 	}
 	else if (!stricmp(szKey, "id"))
 	{
