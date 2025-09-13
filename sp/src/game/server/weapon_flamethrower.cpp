@@ -56,6 +56,8 @@ void CWeaponFlamethrower::Spawn()
 	CSoundEnvelopeController& controller = CSoundEnvelopeController::GetController();
 	CPASAttenuationFilter filter(this);
 	m_pFireEjectSoundPatch = controller.SoundCreate(filter, entindex(), GetShootSound(SINGLE));
+
+	controller.Play(m_pFireEjectSoundPatch, 0.0f, PITCH_NORM);
 }
 
 void CWeaponFlamethrower::ItemPostFrame()
@@ -146,7 +148,7 @@ void CWeaponFlamethrower::PrimaryAttack()
 
 
 		CSoundEnvelopeController& controller = CSoundEnvelopeController::GetController();
-		controller.Play(m_pFireEjectSoundPatch, VOL_NORM, PITCH_NORM);
+		controller.SoundChangeVolume(m_pFireEjectSoundPatch, VOL_NORM, 1.0f);
 	}
 }
 
